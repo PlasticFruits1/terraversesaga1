@@ -3,7 +3,7 @@ import type { Creature } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Heart, Swords, Shield, Wind } from 'lucide-react';
+import { Heart, Swords, Shield } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -66,7 +66,7 @@ export default function CreatureCard({ creature, isSelectable, isSelected, onSel
             />
         </div>
         
-        <div className="grid grid-cols-3 gap-2 text-center text-sm mb-4">
+        <div className="grid grid-cols-2 gap-2 text-center text-sm mb-4">
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-card">
             <Swords className="h-5 w-5 mb-1 text-primary" />
             <span className="font-bold">{creature.attack}</span>
@@ -76,11 +76,6 @@ export default function CreatureCard({ creature, isSelectable, isSelected, onSel
             <Shield className="h-5 w-5 mb-1 text-primary" />
             <span className="font-bold">{creature.defense}</span>
              <span className="text-xs text-muted-foreground">Defense</span>
-          </div>
-          <div className="flex flex-col items-center justify-center p-2 rounded-md bg-card">
-            <Wind className="h-5 w-5 mb-1 text-primary" />
-            <span className="font-bold">{creature.speed}</span>
-             <span className="text-xs text-muted-foreground">Speed</span>
           </div>
         </div>
 

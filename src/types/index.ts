@@ -19,7 +19,6 @@ export interface Creature {
   maxHp: number;
   attack: number;
   defense: number;
-  speed: number;
   imageUrl: string;
   aiHint: string;
   abilities: Ability[];

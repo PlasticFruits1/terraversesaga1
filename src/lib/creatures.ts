@@ -9,7 +9,6 @@ export const initialCreatures: Creature[] = [
     maxHp: 55,
     attack: 45,
     defense: 60,
-    speed: 30,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "rock golem",
     abilities: [
@@ -26,7 +25,6 @@ export const initialCreatures: Creature[] = [
     maxHp: 45,
     attack: 55,
     defense: 40,
-    speed: 50,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "water wolf",
     abilities: [
@@ -43,7 +41,6 @@ export const initialCreatures: Creature[] = [
     maxHp: 40,
     attack: 50,
     defense: 35,
-    speed: 70,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "airborne manta",
     abilities: [
@@ -63,7 +60,6 @@ export const opponentCreatures: Creature[] = [
     maxHp: 70,
     attack: 55,
     defense: 70,
-    speed: 20,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "mountain monster",
     abilities: [
@@ -80,7 +76,6 @@ export const opponentCreatures: Creature[] = [
     maxHp: 65,
     attack: 60,
     defense: 55,
-    speed: 60,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "ocean dragon",
     abilities: [
@@ -97,7 +92,6 @@ export const opponentCreatures: Creature[] = [
     maxHp: 60,
     attack: 65,
     defense: 50,
-    speed: 80,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "thunder bird",
     abilities: [
@@ -114,7 +108,6 @@ export const opponentCreatures: Creature[] = [
     maxHp: 62,
     attack: 75,
     defense: 50,
-    speed: 70,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "hell hound",
     abilities: [
@@ -131,7 +124,6 @@ export const opponentCreatures: Creature[] = [
     maxHp: 50,
     attack: 65,
     defense: 40,
-    speed: 60,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "fire fox",
     abilities: [
@@ -148,7 +140,6 @@ export const opponentCreatures: Creature[] = [
     maxHp: 60,
     attack: 30,
     defense: 50,
-    speed: 45,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "light spirit",
     abilities: [
@@ -165,7 +156,6 @@ export const opponentCreatures: Creature[] = [
     maxHp: 48,
     attack: 58,
     defense: 48,
-    speed: 58,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "shadow spider",
     abilities: [
