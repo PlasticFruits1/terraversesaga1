@@ -93,29 +93,26 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     setBattleLog(prevLog => [message, ...prevLog]);
   };
 
-  const updateCreatureInState = (creatureToUpdate: Creature) => {
-    const applyUpdates = (creatures: Creature[]) => creatures.map(c => c.id === creatureToUpdate.id ? creatureToUpdate : c);
-
-    setPlayerTeam(prev => applyUpdates(prev));
-    setOpponentTeam(prev => applyUpdates(prev));
-    
-    if (activePlayerCreature?.id === creatureToUpdate.id) {
-      setActivePlayerCreature(creatureToUpdate);
+  const updateCreatureInTeam = (team: 'player' | 'opponent', updatedCreature: Creature) => {
+    if (team === 'player') {
+      const newTeam = playerTeam.map(c => c.id === updatedCreature.id ? updatedCreature : c);
+      setPlayerTeam(newTeam);
+      if (activePlayerCreature?.id === updatedCreature.id) {
+        setActivePlayerCreature(updatedCreature);
+      }
+    } else {
+      const newTeam = opponentTeam.map(c => c.id === updatedCreature.id ? updatedCreature : c);
+      setOpponentTeam(newTeam);
+      if (activeOpponentCreature?.id === updatedCreature.id) {
+        setActiveOpponentCreature(updatedCreature);
+      }
     }
-    if (activeOpponentCreature?.id === creatureToUpdate.id) {
-      setActiveOpponentCreature(creatureToUpdate);
-    }
-
-    setGameState(prevState => ({
-        ...prevState,
-        playerCreatures: applyUpdates(prevState.playerCreatures),
-        opponentCreatures: applyUpdates(prevState.opponentCreatures),
-    }));
   };
 
 
   const handleAbilityUse = useCallback((attacker: Creature, defender: Creature | null, ability: Ability) => {
     addToLog(`${attacker.name} uses ${ability.name}!`);
+    const isPlayerAttacker = playerTeam.some(c => c.id === attacker.id);
 
     switch (ability.type) {
         case 'attack':
@@ -124,45 +121,50 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
             let damage = Math.max(1, attacker.attack + (ability.power || 0));
             addToLog(`${attacker.name}'s attack power is ${damage}.`);
 
-            let defenseDamage = Math.min(defender.defense, damage);
             let updatedDefender = { ...defender };
-
+            
+            const defenseDamage = Math.min(updatedDefender.defense, damage);
+            
             if (defenseDamage > 0) {
-                updatedDefender.defense -= defenseDamage;
-                addToLog(`${defender.name}'s defense absorbed ${defenseDamage} damage! Remaining defense: ${updatedDefender.defense}`);
+              updatedDefender.defense -= defenseDamage;
+              addToLog(`${updatedDefender.name}'s defense absorbed ${defenseDamage} damage! Remaining defense: ${updatedDefender.defense}`);
             }
 
-            let hpDamage = damage - defenseDamage;
+            const hpDamage = damage - defenseDamage;
             if (hpDamage > 0) {
-                updatedDefender.hp = Math.max(0, updatedDefender.hp - hpDamage);
-                addToLog(`${defender.name} takes ${hpDamage} HP damage! Remaining HP: ${updatedDefender.hp}`);
+              updatedDefender.hp = Math.max(0, updatedDefender.hp - hpDamage);
+              addToLog(`${updatedDefender.name} takes ${hpDamage} HP damage! Remaining HP: ${updatedDefender.hp}`);
             }
             
-            updateCreatureInState(updatedDefender);
+            updateCreatureInTeam(isPlayerAttacker ? 'opponent' : 'player', updatedDefender);
             break;
         
         case 'defense':
+            let updatedAttacker = { ...attacker };
             const defenseBoost = ability.defenseBoost || 0;
-            addToLog(`${attacker.name}'s defense rose by ${defenseBoost}!`);
-            updateCreatureInState({ ...attacker, defense: attacker.defense + defenseBoost });
+            updatedAttacker.defense += defenseBoost;
+            addToLog(`${updatedAttacker.name}'s defense rose by ${defenseBoost}!`);
+            updateCreatureInTeam(isPlayerAttacker ? 'player' : 'opponent', updatedAttacker);
             break;
 
         case 'heal':
+            let creatureToHeal = { ...attacker };
             const healAmount = ability.power || 0;
-            const newHp = Math.min(attacker.maxHp, attacker.hp + healAmount);
-            addToLog(`${attacker.name} heals for ${healAmount} HP!`);
-            updateCreatureInState({ ...attacker, hp: newHp });
+            const newHp = Math.min(creatureToHeal.maxHp, creatureToHeal.hp + healAmount);
+            addToLog(`${creatureToHeal.name} heals for ${newHp - creatureToHeal.hp} HP!`);
+            creatureToHeal.hp = newHp;
+            updateCreatureInTeam(isPlayerAttacker ? 'player' : 'opponent', creatureToHeal);
             break;
         
         case 'buff':
         case 'debuff':
-             addToLog(`...but it had no immediate effect.`); // Placeholder for more complex effects
+             addToLog(`...but it had no immediate effect.`);
             break;
     }
     
     setSelectedAbility(null);
     setTimeout(() => setIsPlayerTurn(prev => !prev), 100);
-  }, []);
+  }, [playerTeam, opponentTeam]);
 
   const checkBattleEnd = useCallback(() => {
     if (isBattleOver) return;
@@ -170,19 +172,19 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     const playerTeamFainted = playerTeam.every(c => c.hp <= 0);
     const opponentTeamFainted = opponentTeam.every(c => c.hp <= 0);
 
-    if (playerTeamFainted) {
+    if (playerTeam.length > 0 && playerTeamFainted) {
         addToLog("You have been defeated!");
         setIsBattleOver(true);
-    } else if (opponentTeamFainted) {
+    } else if (opponentTeam.length > 0 && opponentTeamFainted) {
         addToLog("You are victorious!");
-        onBattleWin(opponentTeam); // Pass defeated opponents to unlock
+        onBattleWin(opponentTeam);
         setIsBattleOver(true);
     }
   }, [playerTeam, opponentTeam, isBattleOver, onBattleWin]);
 
   // Main game loop effect
   useEffect(() => {
-    if (isBattleOver || showTeamSelection) return;
+    if (isBattleOver || showTeamSelection || !playerTeam.length || !opponentTeam.length) return;
 
     checkBattleEnd();
 
@@ -310,7 +312,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
                 </ScrollArea>
                  {isBattleOver && (
                     <div className="text-center">
-                        <p className="font-bold text-lg">{opponentTeam.every(c => c.hp === 0) ? 'VICTORY' : 'DEFEAT'}</p>
+                        <p className="font-bold text-lg">{opponentTeam.every(c => c.hp <= 0) ? 'VICTORY' : 'DEFEAT'}</p>
                         <Button onClick={resetBattle} className="mt-2">New Battle</Button>
                     </div>
                 )}
@@ -345,15 +347,20 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
                                 variant={selectedAbility?.name === ability.name ? 'default' : 'outline'}
                                 onClick={() => setSelectedAbility(ability)}
                                 disabled={!isPlayerTurn || isBattleOver}
-                                className="h-auto py-2 flex flex-col items-center justify-center text-center"
+                                className="h-auto py-2 flex flex-col items-center justify-center text-center relative"
                             >
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 font-bold">
                                     {ability.type === 'attack' && <Swords size={16} />}
                                     {ability.type === 'defense' && <Shield size={16} />}
                                     {ability.type === 'heal' && <Heart size={16} />}
-                                    <span className="font-bold">{ability.name}</span>
+                                    <span>{ability.name}</span>
                                 </div>
                                 <span className="text-xs text-muted-foreground px-1">{ability.description}</span>
+                                {ability.type === 'attack' && ability.power && (
+                                    <div className="absolute top-1 right-1 bg-primary text-primary-foreground text-xs font-bold px-1.5 py-0.5 rounded-full">
+                                        {ability.power}
+                                    </div>
+                                )}
                             </Button>
                         ))}
                     </div>
@@ -448,3 +455,5 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     </Card>
   );
 }
+
+    
