@@ -1,14 +1,26 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import type { Creature, GameState } from '@/types';
+import type { Creature, GameState, Ability } from '@/types';
 import CreatureCard from './CreatureCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Bot, Sparkles, Swords } from 'lucide-react';
+import { Bot, Sparkles, Swords, Shield } from 'lucide-react';
 import TacticalAssistant from './TacticalAssistant';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 
 interface BattleViewProps {
   playerCreatures: Creature[];
@@ -23,6 +35,7 @@ export default function BattleView({ playerCreatures, opponentCreatures, setGame
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [isBattleOver, setIsBattleOver] = useState(false);
   const [showTacticalAssistant, setShowTacticalAssistant] = useState(false);
+  const [selectedAbility, setSelectedAbility] = useState<Ability | null>(null);
 
   useEffect(() => {
     // Select first 2 creatures for each team for the battle
@@ -34,43 +47,61 @@ export default function BattleView({ playerCreatures, opponentCreatures, setGame
     setBattleLog(prevLog => [message, ...prevLog]);
   };
 
-  const handleAttack = useCallback((attacker: Creature, defender: Creature) => {
-    const damage = Math.max(1, Math.floor(attacker.attack * (1 - defender.defense / 200)));
-    addToLog(`${attacker.name} attacks ${defender.name} for ${damage} damage!`);
+  const handleAbilityUse = useCallback((attacker: Creature, defender: Creature | null, ability: Ability) => {
+    addToLog(`${attacker.name} uses ${ability.name}!`);
 
-    setGameState(prevState => {
-        const updateCreatureHealth = (creatures: Creature[], id: number, dmg: number) => {
-            return creatures.map(c => 
-                c.id === id ? { ...c, hp: Math.max(0, c.hp - dmg) } : c
-            );
-        };
+    if (ability.type === 'attack') {
+        if(!defender) return;
+        const damage = Math.max(1, Math.floor((attacker.attack + (ability.power || 0)) * (1 - defender.defense / 200)));
+        addToLog(`${defender.name} takes ${damage} damage!`);
         
-        let newPlayerCreatures = prevState.playerCreatures;
-        let newOpponentCreatures = prevState.opponentCreatures;
+        setGameState(prevState => {
+            const updateCreatureHealth = (creatures: Creature[], id: number, dmg: number) => {
+                return creatures.map(c => 
+                    c.id === id ? { ...c, hp: Math.max(0, c.hp - dmg) } : c
+                );
+            };
 
-        if (playerCreatures.some(c => c.id === defender.id)) {
-            newPlayerCreatures = updateCreatureHealth(prevState.playerCreatures, defender.id, damage);
-        } else {
-            newOpponentCreatures = updateCreatureHealth(prevState.opponentCreatures, defender.id, damage);
-        }
+            const isPlayerDefender = prevState.playerCreatures.some(c => c.id === defender.id);
+            const newPlayerCreatures = isPlayerDefender ? updateCreatureHealth(prevState.playerCreatures, defender.id, damage) : prevState.playerCreatures;
+            const newOpponentCreatures = !isPlayerDefender ? updateCreatureHealth(prevState.opponentCreatures, defender.id, damage) : prevState.opponentCreatures;
+            
+            return { ...prevState, playerCreatures: newPlayerCreatures, opponentCreatures: newOpponentCreatures };
+        });
+    } else if (ability.type === 'defense') {
+        setGameState(prevState => {
+            const updateCreatureDefense = (creatures: Creature[]) => creatures.map(c =>
+                c.id === attacker.id ? { ...c, defense: c.defense + (ability.defenseBoost || 0) } : c
+            );
+            const isPlayerAttacker = prevState.playerCreatures.some(c => c.id === attacker.id);
+            const newPlayerCreatures = isPlayerAttacker ? updateCreatureDefense(prevState.playerCreatures) : prevState.playerCreatures;
+            const newOpponentCreatures = !isPlayerAttacker ? updateCreatureDefense(prevState.opponentCreatures) : prevState.opponentCreatures;
+            
+            addToLog(`${attacker.name}'s defense rose!`);
+            return { ...prevState, playerCreatures: newPlayerCreatures, opponentCreatures: newOpponentCreatures };
+        });
+    }
+    // TODO: Implement buff/debuff effects
 
-        const newPlayerTeam = newPlayerCreatures.filter(c => playerTeam.some(pt => pt.id === c.id));
-        const newOpponentTeam = newOpponentCreatures.filter(c => opponentTeam.some(ot => ot.id === c.id));
+    // Check for battle end condition
+    setGameState(prevState => {
+      const updatedPlayerTeam = prevState.playerCreatures.filter(c => playerTeam.map(pc => pc.id).includes(c.id));
+      const updatedOpponentTeam = prevState.opponentCreatures.filter(c => opponentTeam.map(oc => oc.id).includes(c.id));
 
-        if (newPlayerTeam.every(c => c.hp === 0)) {
-            addToLog("You have been defeated!");
-            setIsBattleOver(true);
-        }
-        if (newOpponentTeam.every(c => c.hp === 0)) {
-            addToLog("You are victorious!");
-            setIsBattleOver(true);
-        }
-
-        return { ...prevState, playerCreatures: newPlayerCreatures, opponentCreatures: newOpponentCreatures };
+      if (updatedPlayerTeam.every(c => c.hp <= 0)) {
+        addToLog("You have been defeated!");
+        setIsBattleOver(true);
+      }
+      if (updatedOpponentTeam.every(c => c.hp <= 0)) {
+        addToLog("You are victorious!");
+        setIsBattleOver(true);
+      }
+      return prevState;
     });
 
     setIsPlayerTurn(prev => !prev);
-  }, [setGameState, playerCreatures, playerTeam, opponentTeam]);
+    setSelectedAbility(null);
+  }, [setGameState, playerTeam, opponentTeam]);
 
   useEffect(() => {
     if (!isPlayerTurn && !isBattleOver) {
@@ -78,16 +109,30 @@ export default function BattleView({ playerCreatures, opponentCreatures, setGame
       const playerDefender = playerTeam.find(c => c.hp > 0);
 
       if (opponentAttacker && playerDefender) {
-        const timeout = setTimeout(() => {
-          handleAttack(opponentAttacker, playerDefender);
-        }, 1500);
-        return () => clearTimeout(timeout);
+        const attackAbility = opponentAttacker.abilities.find(a => a.type === 'attack');
+        if (attackAbility) {
+            const timeout = setTimeout(() => {
+              handleAbilityUse(opponentAttacker, playerDefender, attackAbility);
+            }, 1500);
+            return () => clearTimeout(timeout);
+        }
       }
     }
-  }, [isPlayerTurn, isBattleOver, handleAttack, playerTeam, opponentTeam]);
+  }, [isPlayerTurn, isBattleOver, handleAbilityUse, playerTeam, opponentTeam]);
 
   const activePlayerCreature = playerTeam.find(c => c.hp > 0);
   const activeOpponentCreature = opponentTeam.find(c => c.hp > 0);
+  
+  const handleUseAbility = () => {
+    if (selectedAbility && activePlayerCreature) {
+        const defender = selectedAbility.type === 'attack' ? activeOpponentCreature : null;
+        if (selectedAbility.type === 'attack' && !defender) {
+            addToLog("No target for attack!");
+            return;
+        }
+        handleAbilityUse(activePlayerCreature, defender, selectedAbility);
+    }
+  }
 
   return (
     <Card>
@@ -106,8 +151,8 @@ export default function BattleView({ playerCreatures, opponentCreatures, setGame
           {/* Opponent Side */}
           <div className="space-y-4">
             <h3 className="text-xl font-headline text-center text-red-600">Opponent Team</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {opponentTeam.map(c => <CreatureCard key={c.id} creature={c} />)}
+            <div className="flex flex-col items-center sm:items-stretch gap-4">
+                {opponentTeam.map(c => <CreatureCard key={c.id} creature={c} className="w-full max-w-sm sm:max-w-none" />)}
             </div>
           </div>
         </div>
@@ -115,14 +160,48 @@ export default function BattleView({ playerCreatures, opponentCreatures, setGame
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-1 space-y-4">
             <h3 className="font-headline text-lg">Actions</h3>
-             <Button 
-                onClick={() => activePlayerCreature && activeOpponentCreature && handleAttack(activePlayerCreature, activeOpponentCreature)}
-                disabled={!isPlayerTurn || isBattleOver || !activePlayerCreature || !activeOpponentCreature}
-                className="w-full"
-                size="lg"
-            >
-                <Swords className="mr-2 h-5 w-5"/> Attack
-            </Button>
+            {activePlayerCreature && (
+                <div className="space-y-2">
+                    <p className="font-semibold text-center">{activePlayerCreature.name}'s Abilities</p>
+                    <div className="grid grid-cols-2 gap-2">
+                        {activePlayerCreature.abilities.map(ability => (
+                            <Button 
+                                key={ability.name}
+                                variant={selectedAbility?.name === ability.name ? 'default' : 'outline'}
+                                onClick={() => setSelectedAbility(ability)}
+                                disabled={!isPlayerTurn || isBattleOver}
+                                className="h-auto py-2 flex flex-col"
+                            >
+                                <span className="font-bold">{ability.name}</span>
+                                <span className="text-xs text-muted-foreground">{ability.description}</span>
+                            </Button>
+                        ))}
+                    </div>
+                </div>
+            )}
+             <AlertDialog>
+                <AlertDialogTrigger asChild>
+                    <Button 
+                        disabled={!isPlayerTurn || isBattleOver || !activePlayerCreature || !selectedAbility}
+                        className="w-full"
+                        size="lg"
+                    >
+                       <Swords className="mr-2 h-5 w-5"/> Use Ability
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Action</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Are you sure you want to use {selectedAbility?.name}?
+                    </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleUseAbility}>Confirm</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
             <Button 
                 variant="outline" 
                 className="w-full"

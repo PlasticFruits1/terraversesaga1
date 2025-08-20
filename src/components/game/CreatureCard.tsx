@@ -4,6 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Heart, Swords, Shield, Wind } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface CreatureCardProps {
   creature: Creature;
@@ -60,7 +66,7 @@ export default function CreatureCard({ creature, isSelectable, isSelected, onSel
             />
         </div>
         
-        <div className="grid grid-cols-3 gap-2 text-center text-sm">
+        <div className="grid grid-cols-3 gap-2 text-center text-sm mb-4">
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-card">
             <Swords className="h-5 w-5 mb-1 text-primary" />
             <span className="font-bold">{creature.attack}</span>
@@ -76,6 +82,25 @@ export default function CreatureCard({ creature, isSelectable, isSelected, onSel
             <span className="font-bold">{creature.speed}</span>
              <span className="text-xs text-muted-foreground">Speed</span>
           </div>
+        </div>
+
+        <div>
+            <h4 className="text-sm font-semibold mb-2 text-center text-muted-foreground">Abilities</h4>
+            <TooltipProvider>
+              <div className="flex justify-center gap-2 flex-wrap">
+                  {creature.abilities.map(ability => (
+                      <Tooltip key={ability.name} delayDuration={100}>
+                          <TooltipTrigger>
+                              <Badge variant="secondary">{ability.name}</Badge>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                              <p className="font-bold">{ability.name} ({ability.type})</p>
+                              <p>{ability.description}</p>
+                          </TooltipContent>
+                      </Tooltip>
+                  ))}
+              </div>
+            </TooltipProvider>
         </div>
       </CardContent>
     </Card>
