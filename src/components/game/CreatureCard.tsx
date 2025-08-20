@@ -17,6 +17,7 @@ interface CreatureCardProps {
   isSelected?: boolean;
   onSelect?: (creature: Creature) => void;
   className?: string;
+  showCurrentDefense?: boolean;
 }
 
 const typeColors: { [key: string]: string } = {
@@ -28,7 +29,7 @@ const typeColors: { [key: string]: string } = {
   Umbra: 'bg-indigo-900 text-white',
 };
 
-export default function CreatureCard({ creature, isSelectable, isSelected, onSelect, className }: CreatureCardProps) {
+export default function CreatureCard({ creature, isSelectable, isSelected, onSelect, className, showCurrentDefense }: CreatureCardProps) {
   const healthPercentage = (creature.hp / creature.maxHp) * 100;
 
   return (

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Bot, Sparkles, Swords, Shield, Heart, Repeat } from 'lucide-react';
+import { Sparkles, Swords, Shield, Heart, Repeat } from 'lucide-react';
 import TacticalAssistant from './TacticalAssistant';
 import {
   AlertDialog,
@@ -93,54 +93,65 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     setBattleLog(prevLog => [message, ...prevLog]);
   };
 
-  const updateCreatureState = (creatureId: number, updates: Partial<Creature>) => {
-    const applyUpdates = (creatures: Creature[]) => 
-        creatures.map(c => c.id === creatureId ? { ...c, ...updates } : c);
+  const updateCreatureInState = (creatureToUpdate: Creature) => {
+    const applyUpdates = (creatures: Creature[]) => creatures.map(c => c.id === creatureToUpdate.id ? creatureToUpdate : c);
 
     setPlayerTeam(prev => applyUpdates(prev));
     setOpponentTeam(prev => applyUpdates(prev));
-
-    if (activePlayerCreature?.id === creatureId) {
-        setActivePlayerCreature(c => c ? { ...c, ...updates } : null);
-    }
-    if (activeOpponentCreature?.id === creatureId) {
-        setActiveOpponentCreature(c => c ? { ...c, ...updates } : null);
-    }
     
-    setGameState(prevState => {
-        return { 
-            ...prevState, 
-            playerCreatures: applyUpdates(prevState.playerCreatures),
-            opponentCreatures: applyUpdates(prevState.opponentCreatures)
-        };
-    });
-  }
+    if (activePlayerCreature?.id === creatureToUpdate.id) {
+      setActivePlayerCreature(creatureToUpdate);
+    }
+    if (activeOpponentCreature?.id === creatureToUpdate.id) {
+      setActiveOpponentCreature(creatureToUpdate);
+    }
+
+    setGameState(prevState => ({
+        ...prevState,
+        playerCreatures: applyUpdates(prevState.playerCreatures),
+        opponentCreatures: applyUpdates(prevState.opponentCreatures),
+    }));
+  };
 
 
   const handleAbilityUse = useCallback((attacker: Creature, defender: Creature | null, ability: Ability) => {
     addToLog(`${attacker.name} uses ${ability.name}!`);
 
-    let damage = 0;
-
     switch (ability.type) {
         case 'attack':
             if (!defender) return;
-            damage = Math.max(1, Math.floor((attacker.attack + (ability.power || 0)) * (1 - defender.defense / 200)));
-            addToLog(`${defender.name} takes ${damage} damage!`);
-            updateCreatureState(defender.id, { hp: Math.max(0, defender.hp - damage) });
+
+            let damage = Math.max(1, attacker.attack + (ability.power || 0));
+            addToLog(`${attacker.name}'s attack power is ${damage}.`);
+
+            let defenseDamage = Math.min(defender.defense, damage);
+            let updatedDefender = { ...defender };
+
+            if (defenseDamage > 0) {
+                updatedDefender.defense -= defenseDamage;
+                addToLog(`${defender.name}'s defense absorbed ${defenseDamage} damage! Remaining defense: ${updatedDefender.defense}`);
+            }
+
+            let hpDamage = damage - defenseDamage;
+            if (hpDamage > 0) {
+                updatedDefender.hp = Math.max(0, updatedDefender.hp - hpDamage);
+                addToLog(`${defender.name} takes ${hpDamage} HP damage! Remaining HP: ${updatedDefender.hp}`);
+            }
+            
+            updateCreatureInState(updatedDefender);
             break;
         
         case 'defense':
             const defenseBoost = ability.defenseBoost || 0;
             addToLog(`${attacker.name}'s defense rose by ${defenseBoost}!`);
-            updateCreatureState(attacker.id, { defense: attacker.defense + defenseBoost });
+            updateCreatureInState({ ...attacker, defense: attacker.defense + defenseBoost });
             break;
 
         case 'heal':
             const healAmount = ability.power || 0;
             const newHp = Math.min(attacker.maxHp, attacker.hp + healAmount);
             addToLog(`${attacker.name} heals for ${healAmount} HP!`);
-            updateCreatureState(attacker.id, { hp: newHp });
+            updateCreatureInState({ ...attacker, hp: newHp });
             break;
         
         case 'buff':
@@ -150,10 +161,8 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     }
     
     setSelectedAbility(null);
-    // Use timeout to allow state to update before checking for fainted creatures
     setTimeout(() => setIsPlayerTurn(prev => !prev), 100);
-
-  }, [setGameState]);
+  }, []);
 
   const checkBattleEnd = useCallback(() => {
     if (isBattleOver) return;
@@ -283,7 +292,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
             {/* Player Side */}
             <div className="space-y-4 md:col-span-1">
                 <h3 className="text-xl font-headline text-center text-green-400">Your Team</h3>
-                {activePlayerCreature && <CreatureCard creature={activePlayerCreature} />}
+                {activePlayerCreature && <CreatureCard creature={activePlayerCreature} showCurrentDefense />}
                 <div className="flex justify-center gap-2">
                     {playerTeam.map(c => (
                         <button key={c.id} onClick={() => setShowSwitchDialog(true)} disabled={c.id === activePlayerCreature?.id || c.hp <= 0}>
@@ -310,7 +319,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
             {/* Opponent Side */}
             <div className="space-y-4 md:col-span-1">
                 <h3 className="text-xl font-headline text-center text-red-400">Opponent Team</h3>
-                {activeOpponentCreature && <CreatureCard creature={activeOpponentCreature} />}
+                {activeOpponentCreature && <CreatureCard creature={activeOpponentCreature} showCurrentDefense />}
                  <div className="flex justify-center gap-2">
                     {opponentTeam.map(c => (
                         <div key={c.id}>
