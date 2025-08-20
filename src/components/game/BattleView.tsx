@@ -180,7 +180,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     updateCreatureState(updatedAttacker.id, updatedAttacker, isPlayerAttacker ? 'player' : 'opponent');
     setSelectedAbility(null);
     setTimeout(() => setIsPlayerTurn(prev => !prev), 100);
-  }, [playerTeam, opponentTeam, activePlayerCreature, activeOpponentCreature]);
+  }, [playerTeam, opponentTeam]);
 
   const checkBattleEnd = useCallback(() => {
     if (isBattleOver) return;
@@ -283,9 +283,18 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
             toast({ variant: "destructive", title: "No switches left!", description: "You cannot switch creatures anymore in this battle." });
             return;
         }
+        
+        // Find the creature in the current team to get the most up-to-date state
+        const creatureToSwitch = playerTeam.find(c => c.id === creature.id);
+        if(!creatureToSwitch) return;
 
-        const newActiveCreature = { ...creature, energy: creature.maxEnergy };
-        updateCreatureState(creature.id, { energy: creature.maxEnergy }, 'player');
+        const newActiveCreature = { ...creatureToSwitch, energy: creatureToSwitch.maxEnergy };
+        
+        // Update the state of the specific creature in the team array
+        setPlayerTeam(prevTeam => prevTeam.map(c => 
+            c.id === creature.id ? { ...c, energy: c.maxEnergy } : c
+        ));
+
         setActivePlayerCreature(newActiveCreature);
 
         addToLog(`Go, ${creature.name}!`);
@@ -470,15 +479,14 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
                 </DialogHeader>
                 <div className="grid grid-cols-3 gap-4 py-4">
                     {playerTeam.map(c => (
-                        <div key={c.id} className="flex flex-col items-center">
-                            <button
-                                onClick={() => handleSwitchCreature(c)}
-                                disabled={c.id === activePlayerCreature?.id || c.hp <= 0}
-                                className="disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <CreatureCard creature={c} className="w-full"/>
-                            </button>
-                        </div>
+                        <CreatureCard
+                            key={c.id}
+                            creature={c}
+                            isSelectable
+                            isSelected={c.id === activePlayerCreature?.id}
+                            onSelect={() => handleSwitchCreature(c)}
+                            className={`w-full ${c.id === activePlayerCreature?.id || c.hp <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        />
                     ))}
                 </div>
                 <DialogFooter>

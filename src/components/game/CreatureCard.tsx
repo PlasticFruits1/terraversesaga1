@@ -10,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { cn } from '@/lib/utils';
 
 interface CreatureCardProps {
   creature: Creature;
@@ -33,10 +34,20 @@ export default function CreatureCard({ creature, isSelectable, isSelected, onSel
   const healthPercentage = (creature.hp / creature.maxHp) * 100;
   const energyPercentage = (creature.energy / creature.maxEnergy) * 100;
 
+  const handleCardClick = () => {
+    if (isSelectable && onSelect) {
+      onSelect(creature);
+    }
+  };
+
   return (
     <Card 
-        className={`overflow-hidden transition-all duration-300 ${isSelectable ? 'cursor-pointer hover:shadow-lg hover:border-primary' : ''} ${isSelected ? 'border-primary ring-2 ring-primary' : ''} ${className}`}
-        onClick={() => onSelect?.(creature)}
+        className={cn(`overflow-hidden transition-all duration-300`, 
+          isSelectable && 'cursor-pointer hover:shadow-lg hover:border-primary',
+          isSelected && 'border-primary ring-2 ring-primary',
+          className
+        )}
+        onClick={handleCardClick}
     >
       <CardHeader className="p-4">
         <div className="flex justify-between items-start">
@@ -97,8 +108,8 @@ export default function CreatureCard({ creature, isSelectable, isSelected, onSel
               <div className="flex justify-center gap-2 flex-wrap">
                   {creature.abilities.map(ability => (
                       <Tooltip key={ability.name} delayDuration={100}>
-                          <TooltipTrigger>
-                              <Badge variant="secondary">{ability.name}</Badge>
+                          <TooltipTrigger asChild>
+                            <Badge variant="secondary" className="cursor-help">{ability.name}</Badge>
                           </TooltipTrigger>
                           <TooltipContent>
                               <p className="font-bold">{ability.name} ({ability.type})</p>
