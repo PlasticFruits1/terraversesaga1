@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -96,8 +97,8 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     const applyUpdates = (creatures: Creature[]) => 
         creatures.map(c => c.id === creatureId ? { ...c, ...updates } : c);
 
-    setPlayerTeam(applyUpdates);
-    setOpponentTeam(applyUpdates);
+    setPlayerTeam(prev => applyUpdates(prev));
+    setOpponentTeam(prev => applyUpdates(prev));
 
     if (activePlayerCreature?.id === creatureId) {
         setActivePlayerCreature(c => c ? { ...c, ...updates } : null);
