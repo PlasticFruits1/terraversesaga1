@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function Home() {
-  const { gameState, saveGame, loadGame, resetGame, setGameState } = useGameState();
+  const { gameState, saveGame, loadGame, resetGame, setGameState, unlockCreature } = useGameState();
 
   if (!gameState) {
     return (
@@ -59,8 +59,9 @@ export default function Home() {
           <TabsContent value="battle" className="mt-4">
             <BattleView
               playerCreatures={gameState.playerCreatures}
-              opponentCreatures={gameState.opponentCreatures}
+              allOpponentCreatures={gameState.opponentCreatures}
               setGameState={setGameState}
+              onBattleWin={unlockCreature}
             />
           </TabsContent>
         </Tabs>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, type Dispatch, type SetStateAction } from 'react';
-import type { GameState } from '@/types';
+import type { GameState, Creature } from '@/types';
 import { initialCreatures, opponentCreatures as initialOpponentCreatures } from '@/lib/creatures';
 import { useToast } from './use-toast';
 
@@ -69,5 +69,27 @@ export function useGameState() {
     toast({ title: "Game Reset!", description: "Your game has been reset to its initial state." });
   }, [toast]);
 
-  return { gameState, saveGame, loadGame, resetGame, setGameState: setGameState as Dispatch<SetStateAction<GameState>> };
+  const unlockCreature = useCallback((unlockedCreatures: Creature[]) => {
+    setGameState(prevState => {
+        if (!prevState) return null;
+        
+        const newCreatures = unlockedCreatures.filter(unlocked => 
+            !prevState.playerCreatures.some(existing => existing.id === unlocked.id)
+        );
+
+        if (newCreatures.length > 0) {
+            toast({
+                title: "Creatures Unlocked!",
+                description: `${newCreatures.map(c => c.name).join(', ')} have been added to your roster.`
+            });
+            return {
+                ...prevState,
+                playerCreatures: [...prevState.playerCreatures, ...newCreatures]
+            }
+        }
+        return prevState;
+    });
+  }, [toast, setGameState]);
+
+  return { gameState, saveGame, loadGame, resetGame, setGameState: setGameState as Dispatch<SetStateAction<GameState>>, unlockCreature };
 }

@@ -1,6 +1,6 @@
 export type CreatureType = "Terra" | "Aqua" | "Aero" | "Ignis" | "Lux" | "Umbra";
 
-export type AbilityType = 'attack' | 'defense' | 'buff' | 'debuff';
+export type AbilityType = 'attack' | 'defense' | 'buff' | 'debuff' | 'heal';
 
 export interface Ability {
   name: string;
