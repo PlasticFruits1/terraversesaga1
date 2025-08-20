@@ -97,7 +97,7 @@ export default function CreatureCard({ creature, isSelectable, isSelected, onSel
           </div>
           <div className="flex flex-col items-center justify-center p-2 rounded-md bg-card">
             <Shield className="h-5 w-5 mb-1 text-primary" />
-            <span className="font-bold">{creature.defense}</span>
+            <span className="font-bold">{showCurrentDefense ? creature.defense : creature.defense}</span>
              <span className="text-xs text-muted-foreground">Defense</span>
           </div>
         </div>

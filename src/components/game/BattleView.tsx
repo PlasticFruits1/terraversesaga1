@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Creature, GameState, Ability } from '@/types';
 import CreatureCard from './CreatureCard';
 import { Button } from '@/components/ui/button';
@@ -98,24 +98,24 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
   };
 
   const addToLog = (message: string) => {
-    setBattleLog(prevLog => [message, ...prevLog]);
+    setBattleLog(prevLog => [message, ...prevLog].slice(0, 50));
   };
 
-  const updateCreatureState = (creatureId: number, updates: Partial<Creature>, team: 'player' | 'opponent') => {
+  const updateCreatureState = useCallback((creatureId: number, updates: Partial<Creature>, team: 'player' | 'opponent') => {
       const teamToUpdate = team === 'player' ? playerTeam : opponentTeam;
       const setTeam = team === 'player' ? setPlayerTeam : setOpponentTeam;
-      const setActiveCreature = team === 'player' ? setActivePlayerCreature : setActiveOpponentCreature;
+      const setActive = team === 'player' ? setActivePlayerCreature : setActiveOpponentCreature;
+      const activeCreature = team === 'player' ? activePlayerCreature : activeOpponentCreature;
       
       const newTeam = teamToUpdate.map(c => 
           c.id === creatureId ? { ...c, ...updates } : c
       );
       setTeam(newTeam);
 
-      const activeCreature = team === 'player' ? activePlayerCreature : activeOpponentCreature;
       if (activeCreature?.id === creatureId) {
-          setActiveCreature(newTeam.find(c => c.id === creatureId) || null);
+          setActive(newTeam.find(c => c.id === creatureId) || null);
       }
-  };
+  }, [playerTeam, opponentTeam, activePlayerCreature, activeOpponentCreature]);
 
 
   const handleAbilityUse = useCallback((attacker: Creature, defender: Creature | null, ability: Ability) => {
@@ -152,7 +152,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
               addToLog(`${updatedDefender.name} takes ${hpDamage} HP damage! Remaining HP: ${updatedDefender.hp}`);
             }
             
-            updateCreatureState(updatedDefender.id, updatedDefender, targetTeam);
+            updateCreatureState(updatedDefender.id, { hp: updatedDefender.hp, defense: updatedDefender.defense }, targetTeam);
             break;
         
         case 'defense':
@@ -179,35 +179,33 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
         addToLog(`${updatedAttacker.name} ran out of energy and fell asleep!`);
     }
 
-    updateCreatureState(updatedAttacker.id, updatedAttacker, isPlayerAttacker ? 'player' : 'opponent');
+    updateCreatureState(updatedAttacker.id, {
+        hp: updatedAttacker.hp,
+        energy: updatedAttacker.energy,
+        defense: updatedAttacker.defense,
+        isSleeping: updatedAttacker.isSleeping
+    }, isPlayerAttacker ? 'player' : 'opponent');
     setSelectedAbility(null);
     setTimeout(() => setIsPlayerTurn(prev => !prev), 100);
-  }, [playerTeam, opponentTeam]);
+  }, [playerTeam, opponentTeam, updateCreatureState]);
 
   const checkBattleEnd = useCallback(() => {
-    if (isBattleOver) return false;
-
     const playerTeamFainted = playerTeam.every(c => c.hp <= 0);
     const opponentTeamFainted = opponentTeam.every(c => c.hp <= 0);
 
     if (playerTeam.length > 0 && playerTeamFainted) {
         addToLog("You have been defeated!");
         setIsBattleOver(true);
-        return true;
     } else if (opponentTeam.length > 0 && opponentTeamFainted) {
         addToLog("You are victorious!");
         onBattleWin(opponentTeam);
         setIsBattleOver(true);
-        return true;
     }
-    return false;
-  }, [playerTeam, opponentTeam, isBattleOver, onBattleWin]);
+  }, [playerTeam, opponentTeam, onBattleWin]);
 
   // Main game loop effect
   useEffect(() => {
-    if (showTeamSelection || !playerTeam.length || !opponentTeam.length) return;
-
-    if (checkBattleEnd()) return;
+    if (isBattleOver || showTeamSelection || !playerTeam.length || !opponentTeam.length) return;
 
     // Handle fainted active creature
     if (activePlayerCreature?.hp <= 0) {
@@ -264,7 +262,13 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
         setIsPlayerTurn(true); // Skip turn if opponent can't act
       }
     }
-  }, [isPlayerTurn, isBattleOver, handleAbilityUse, playerTeam, opponentTeam, activePlayerCreature, activeOpponentCreature, checkBattleEnd, showTeamSelection]);
+  }, [isPlayerTurn, isBattleOver, handleAbilityUse, playerTeam, opponentTeam, activePlayerCreature, activeOpponentCreature, showTeamSelection, updateCreatureState]);
+
+  useEffect(() => {
+    if (!isBattleOver) {
+      checkBattleEnd();
+    }
+  }, [playerTeam, opponentTeam, isBattleOver, checkBattleEnd]);
 
 
   const handleUseAbility = () => {
@@ -294,21 +298,17 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
         if(!creatureToSwitch) return;
 
         // Switching replenishes energy
-        const newActiveCreature = { ...creatureToSwitch, energy: creatureToSwitch.maxEnergy };
+        const newActiveCreature = { ...creatureToSwitch, energy: creatureToSwitch.maxEnergy, isSleeping: false };
         
-        // Update the state of the specific creature in the team array
-        setPlayerTeam(prevTeam => prevTeam.map(c => 
-            c.id === creature.id ? { ...c, energy: c.maxEnergy } : c
-        ));
-
+        const newPlayerTeam = playerTeam.map(c => 
+            c.id === creature.id ? { ...c, energy: c.maxEnergy, isSleeping: false } : c
+        );
+        setPlayerTeam(newPlayerTeam);
         setActivePlayerCreature(newActiveCreature);
 
         addToLog(`Go, ${creature.name}!`);
         setShowSwitchDialog(false);
         setRemainingSwitches(prev => prev - 1);
-        
-        // Player does NOT lose their turn after switching
-        // setIsPlayerTurn(false);
     }
   }
 
@@ -321,7 +321,12 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     setActiveOpponentCreature(null);
     setBattleLog([]);
     setIsBattleOver(false);
+    setSelectedAbility(null);
   }
+  
+  const canPlayerAct = useMemo(() => {
+    return isPlayerTurn && !isBattleOver && activePlayerCreature && activePlayerCreature.hp > 0 && !activePlayerCreature.isSleeping;
+  }, [isPlayerTurn, isBattleOver, activePlayerCreature]);
 
   if (showTeamSelection) {
     return (
@@ -351,14 +356,18 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
   }
 
   return (
-    <Card>
+    <Card className="overflow-hidden">
       <CardHeader>
-        <CardTitle className="font-headline text-2xl">Battle Arena</CardTitle>
+        <CardTitle className="font-headline text-2xl flex justify-between items-center">
+            <span>Battle Arena</span>
+            <div className="font-bold text-sm text-muted-foreground">Switches Left: {remainingSwitches}</div>
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Creatures Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
             {/* Player Side */}
-            <div className="space-y-4 md:col-span-1">
+            <div className="space-y-4">
                 <h3 className="text-xl font-headline text-center text-green-400">Your Team</h3>
                 {activePlayerCreature && <CreatureCard creature={activePlayerCreature} showCurrentDefense />}
                 <div className="flex justify-center gap-2">
@@ -370,104 +379,97 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
                 </div>
             </div>
 
-            {/* Battle Log / Actions */}
-            <div className="space-y-4 md:col-span-1">
-                <div className="flex justify-between items-center">
-                    <h3 className="font-headline text-lg text-center">Battle Log</h3>
-                    <div className="font-bold text-sm">Switches Left: {remainingSwitches}</div>
-                </div>
-                <ScrollArea className="h-48 w-full rounded-md border p-4 bg-muted/50">
-                    {battleLog.map((log, index) => <p key={index} className="text-sm mb-1">{log}</p>)}
-                </ScrollArea>
-                 {isBattleOver && (
-                    <div className="text-center">
-                        <p className="font-bold text-lg">{opponentTeam.every(c => c.hp <= 0) ? 'VICTORY' : 'DEFEAT'}</p>
-                        <Button onClick={resetBattle} className="mt-2">New Battle</Button>
-                    </div>
-                )}
-            </div>
-
             {/* Opponent Side */}
-            <div className="space-y-4 md:col-span-1">
+            <div className="space-y-4">
                 <h3 className="text-xl font-headline text-center text-red-400">Opponent</h3>
                 {activeOpponentCreature && <CreatureCard creature={activeOpponentCreature} showCurrentDefense />}
             </div>
         </div>
-        <Separator className="my-6" />
 
-        {/* Player Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-          <div className="md:col-span-2 space-y-4">
-            <h3 className="font-headline text-lg">Actions</h3>
-            {activePlayerCreature && activePlayerCreature.hp > 0 && (
-                <div className="space-y-2">
-                    <p className="font-semibold text-center">{activePlayerCreature.name}'s Abilities</p>
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                        {activePlayerCreature.abilities.map(ability => (
-                            <Button 
-                                key={ability.name}
-                                variant={selectedAbility?.name === ability.name ? 'default' : 'outline'}
-                                onClick={() => setSelectedAbility(ability)}
-                                disabled={!isPlayerTurn || isBattleOver || activePlayerCreature.isSleeping || activePlayerCreature.energy < ability.energyCost}
-                                className="h-auto py-2 flex flex-col items-center justify-center text-center relative"
-                            >
-                                <div className="flex items-center gap-2 font-bold">
-                                    {ability.type === 'attack' && <Swords size={16} />}
-                                    {ability.type === 'defense' && <Shield size={16} />}
-                                    {ability.type === 'heal' && <Heart size={16} />}
-                                    <span>{ability.name}</span>
-                                </div>
-                                <span className="text-xs text-muted-foreground px-1">{ability.description}</span>
-                                <div className="absolute top-1 right-1 flex items-center bg-primary text-primary-foreground text-xs font-bold px-1.5 py-0.5 rounded-full">
-                                    {ability.type === 'attack' && ability.power && <span className="mr-1">{ability.power}</span>}
-                                    <Zap size={10} className="inline-block" />
-                                    <span className="ml-0.5">{ability.energyCost}</span>
-                                </div>
-                            </Button>
-                        ))}
-                    </div>
+        <Separator className="my-4" />
+
+        {/* Log and Actions Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+          <div className="lg:col-span-2 space-y-2">
+            <h3 className="font-headline text-lg text-center">Battle Log</h3>
+            <ScrollArea className="h-48 w-full rounded-md border p-4 bg-muted/50">
+                {battleLog.map((log, index) => <p key={index} className="text-sm mb-1">{log}</p>)}
+            </ScrollArea>
+             {isBattleOver && (
+                <div className="text-center">
+                    <p className="font-bold text-lg">{opponentTeam.every(c => c.hp <= 0) ? 'VICTORY' : 'DEFEAT'}</p>
+                    <Button onClick={resetBattle} className="mt-2">New Battle</Button>
                 </div>
             )}
           </div>
-          <div className="space-y-2 flex flex-col justify-start">
-             <AlertDialog>
-                <AlertDialogTrigger asChild>
-                    <Button 
-                        disabled={!isPlayerTurn || isBattleOver || !activePlayerCreature || !selectedAbility || activePlayerCreature.hp <= 0 || activePlayerCreature.isSleeping}
-                        className="w-full"
-                        size="lg"
-                    >
-                       <Swords className="mr-2 h-5 w-5"/> Use Ability
-                    </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Confirm Action</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Are you sure you want {activePlayerCreature?.name} to use {selectedAbility?.name}?
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleUseAbility}>Confirm</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-            <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => setShowSwitchDialog(true)}
-                disabled={!isPlayerTurn || isBattleOver || playerTeam.filter(c => c.hp > 0).length <= 1 || remainingSwitches <= 0 || activePlayerCreature?.isSleeping}
-             >
-              <Repeat className="mr-2 h-5 w-5"/> Switch Creature ({remainingSwitches})
-            </Button>
-             <Button 
-                variant="outline" 
-                className="w-full"
-                onClick={() => setShowTacticalAssistant(true)}
-             >
-              <Sparkles className="mr-2 h-5 w-5 text-accent"/> Tactical Assistant
-            </Button>
+
+          <div className="lg:col-span-3 space-y-2">
+            <h3 className="font-headline text-lg text-center">Actions</h3>
+            {activePlayerCreature && activePlayerCreature.hp > 0 && !isBattleOver && (
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+                    {activePlayerCreature.abilities.map(ability => (
+                        <Button 
+                            key={ability.name}
+                            variant={selectedAbility?.name === ability.name ? 'default' : 'outline'}
+                            onClick={() => setSelectedAbility(ability)}
+                            disabled={!canPlayerAct || activePlayerCreature.energy < ability.energyCost}
+                            className="h-auto py-2 flex flex-col items-center justify-center text-center relative"
+                        >
+                            <div className="flex items-center gap-2 font-bold">
+                                {ability.type === 'attack' && <Swords size={16} />}
+                                {ability.type === 'defense' && <Shield size={16} />}
+                                {ability.type === 'heal' && <Heart size={16} />}
+                                <span>{ability.name}</span>
+                            </div>
+                            <span className="text-xs text-muted-foreground px-1">{ability.description}</span>
+                            <div className="absolute top-1 right-1 flex items-center bg-primary text-primary-foreground text-xs font-bold px-1.5 py-0.5 rounded-full">
+                                {ability.type === 'attack' && ability.power && <span className="mr-1">{ability.power}</span>}
+                                <Zap size={10} className="inline-block" />
+                                <span className="ml-0.5">{ability.energyCost}</span>
+                            </div>
+                        </Button>
+                    ))}
+                </div>
+            )}
+             <div className="flex gap-2 pt-2">
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button 
+                            disabled={!canPlayerAct || !selectedAbility}
+                            className="w-full"
+                        >
+                           <Swords className="mr-2 h-5 w-5"/> Use Ability
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Confirm Action</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Are you sure you want {activePlayerCreature?.name} to use {selectedAbility?.name}?
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleUseAbility}>Confirm</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+                <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => setShowSwitchDialog(true)}
+                    disabled={!isPlayerTurn || isBattleOver || playerTeam.filter(c => c.hp > 0).length <= 1 || remainingSwitches <= 0 || activePlayerCreature?.isSleeping}
+                 >
+                  <Repeat className="mr-2 h-5 w-5"/> Switch
+                </Button>
+                 <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => setShowTacticalAssistant(true)}
+                 >
+                  <Sparkles className="mr-2 h-5 w-5 text-accent"/> Assistant
+                </Button>
+            </div>
           </div>
         </div>
         
@@ -480,8 +482,8 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
                 </DialogHeader>
                 <div className="grid grid-cols-3 gap-4 py-4">
                     {playerTeam.map(c => (
-                        <div key={c.id} onClick={() => handleSwitchCreature(c)} className={`cursor-pointer ${c.id === activePlayerCreature?.id || c.hp <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                            <CreatureCard
+                        <div key={c.id} onClick={() => handleSwitchCreature(c)} className={`cursor-pointer ${c.id === activePlayerCreature?.id || c.hp <= 0 ? 'opacity-50 cursor-not-allowed' : 'hover:ring-2 hover:ring-primary rounded-lg'}`}>
+                             <CreatureCard
                                 creature={c}
                                 isSelectable={!(c.id === activePlayerCreature?.id || c.hp <= 0)}
                                 isSelected={c.id === activePlayerCreature?.id}
@@ -492,7 +494,6 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
                 </div>
                 <DialogFooter>
                     <Button variant="secondary" onClick={() => {
-                        // If force switching, don't allow close
                         if(activePlayerCreature?.hp <= 0) return;
                         setShowSwitchDialog(false)
                     }}>
@@ -516,5 +517,3 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     </Card>
   );
 }
-
-    
