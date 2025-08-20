@@ -8,8 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Sparkles, Swords, Shield, Heart, Repeat, Zap } from 'lucide-react';
-import TacticalAssistant from './TacticalAssistant';
+import { Swords, Repeat } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,7 +18,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import {
   Dialog,
@@ -50,7 +48,6 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
   const [battleLog, setBattleLog] = useState<string[]>([]);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [isBattleOver, setIsBattleOver] = useState(false);
-  const [showTacticalAssistant, setShowTacticalAssistant] = useState(false);
   const [selectedAbility, setSelectedAbility] = useState<Ability | null>(null);
   
   const [showTeamSelection, setShowTeamSelection] = useState(true);
@@ -71,7 +68,6 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     setPlayerTeam(livePlayerTeam);
     setActivePlayerCreature(livePlayerTeam[0]);
 
-    // Select one powerful opponent instead of a team
     const shuffledOpponents = [...allOpponentCreatures].sort(() => 0.5 - Math.random());
     const bossCreature = shuffledOpponents[0];
     const liveOpponentTeam = [{...bossCreature, hp: bossCreature.maxHp, energy: bossCreature.maxEnergy, defense: bossCreature.defense, isSleeping: false}];
@@ -118,23 +114,28 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
   }, [playerTeam, opponentTeam, activePlayerCreature, activeOpponentCreature]);
 
 
-  const handleAbilityUse = useCallback((attacker: Creature, defender: Creature | null, ability: Ability) => {
-    if (attacker.energy < ability.energyCost) {
+  const handleAbilityUse = useCallback(() => {
+    if (!selectedAbility || !activePlayerCreature) return;
+
+    const attacker = activePlayerCreature;
+    const defender = ['attack', 'debuff'].includes(selectedAbility.type) ? activeOpponentCreature : null;
+
+    if (attacker.energy < selectedAbility.energyCost) {
         addToLog(`${attacker.name} doesn't have enough energy!`);
         return;
     }
     
     let updatedAttacker = { ...attacker };
-    updatedAttacker.energy -= ability.energyCost;
-    addToLog(`${attacker.name} uses ${ability.name}!`);
+    updatedAttacker.energy -= selectedAbility.energyCost;
+    addToLog(`${attacker.name} uses ${selectedAbility.name}!`);
     const isPlayerAttacker = playerTeam.some(c => c.id === attacker.id);
     const targetTeam = isPlayerAttacker ? 'opponent' : 'player';
 
-    switch (ability.type) {
+    switch (selectedAbility.type) {
         case 'attack':
             if (!defender) return;
 
-            let damage = Math.max(1, attacker.attack + (ability.power || 0));
+            let damage = Math.max(1, attacker.attack + (selectedAbility.power || 0));
             addToLog(`${attacker.name}'s attack power is ${damage}.`);
 
             let updatedDefender = { ...defender };
@@ -156,13 +157,13 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
             break;
         
         case 'defense':
-            const defenseBoost = ability.defenseBoost || 0;
+            const defenseBoost = selectedAbility.defenseBoost || 0;
             updatedAttacker.defense += defenseBoost;
             addToLog(`${updatedAttacker.name}'s defense rose by ${defenseBoost}!`);
             break;
 
         case 'heal':
-            const healAmount = ability.power || 0;
+            const healAmount = selectedAbility.power || 0;
             const newHp = Math.min(updatedAttacker.maxHp, updatedAttacker.hp + healAmount);
             addToLog(`${updatedAttacker.name} heals for ${newHp - updatedAttacker.hp} HP!`);
             updatedAttacker.hp = newHp;
@@ -185,9 +186,10 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
         defense: updatedAttacker.defense,
         isSleeping: updatedAttacker.isSleeping
     }, isPlayerAttacker ? 'player' : 'opponent');
+    
     setSelectedAbility(null);
     setTimeout(() => setIsPlayerTurn(prev => !prev), 100);
-  }, [playerTeam, opponentTeam, updateCreatureState]);
+  }, [activePlayerCreature, activeOpponentCreature, selectedAbility, playerTeam, opponentTeam, updateCreatureState]);
 
   const checkBattleEnd = useCallback(() => {
     const playerTeamFainted = playerTeam.every(c => c.hp <= 0);
@@ -207,7 +209,6 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
   useEffect(() => {
     if (isBattleOver || showTeamSelection || !playerTeam.length || !opponentTeam.length) return;
 
-    // Handle fainted active creature
     if (activePlayerCreature?.hp <= 0) {
         const nextPlayerCreature = playerTeam.find(c => c.hp > 0);
         if (nextPlayerCreature) {
@@ -227,7 +228,6 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
         }
     }
 
-    // Handle sleeping creatures waking up
     if (isPlayerTurn && activePlayerCreature?.isSleeping) {
         addToLog(`${activePlayerCreature.name} woke up!`);
         updateCreatureState(activePlayerCreature.id, { isSleeping: false }, 'player');
@@ -235,34 +235,76 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
         return;
     }
 
-
-    // Opponent's turn logic
-    if (!isPlayerTurn && !isBattleOver) {
-        if (activeOpponentCreature?.isSleeping) {
-            addToLog(`${activeOpponentCreature.name} is asleep!`);
+    if (!isPlayerTurn && !isBattleOver && activeOpponentCreature) {
+        if (activeOpponentCreature.isSleeping) {
+            addToLog(`${activeOpponentCreature.name} is asleep! It woke up!`);
             updateCreatureState(activeOpponentCreature.id, { isSleeping: false }, 'opponent');
             setTimeout(() => setIsPlayerTurn(true), 1500);
             return;
         }
 
-      if (activeOpponentCreature && activeOpponentCreature.hp > 0 && activePlayerCreature && activePlayerCreature.hp > 0) {
+      if (activeOpponentCreature.hp > 0 && activePlayerCreature && activePlayerCreature.hp > 0) {
         const usableAbilities = activeOpponentCreature.abilities.filter(a => a.energyCost <= activeOpponentCreature.energy);
         if (usableAbilities.length > 0) {
             const abilityToUse = usableAbilities[Math.floor(Math.random() * usableAbilities.length)];
             const timeout = setTimeout(() => {
-              handleAbilityUse(activeOpponentCreature, activePlayerCreature, abilityToUse);
+              // We need to pass the arguments directly to a wrapper function
+              const performOpponentTurn = (attacker: Creature, defender: Creature, ability: Ability) => {
+                  let updatedAttacker = { ...attacker };
+                  updatedAttacker.energy -= ability.energyCost;
+                  addToLog(`Opponent's ${attacker.name} uses ${ability.name}!`);
+              
+                  switch (ability.type) {
+                      case 'attack':
+                          let damage = Math.max(1, attacker.attack + (ability.power || 0));
+                          addToLog(`${attacker.name}'s attack power is ${damage}.`);
+                          let updatedDefender = { ...defender };
+                          const defenseDamage = Math.min(updatedDefender.defense, damage);
+                          if (defenseDamage > 0) {
+                              updatedDefender.defense -= defenseDamage;
+                              addToLog(`Your ${updatedDefender.name}'s defense absorbed ${defenseDamage} damage!`);
+                          }
+                          const hpDamage = damage - defenseDamage;
+                          if (hpDamage > 0) {
+                              updatedDefender.hp = Math.max(0, updatedDefender.hp - hpDamage);
+                              addToLog(`Your ${updatedDefender.name} takes ${hpDamage} HP damage!`);
+                          }
+                          updateCreatureState(updatedDefender.id, { hp: updatedDefender.hp, defense: updatedDefender.defense }, 'player');
+                          break;
+                      case 'defense':
+                          updatedAttacker.defense += ability.defenseBoost || 0;
+                          addToLog(`Opponent's ${updatedAttacker.name}'s defense rose!`);
+                          break;
+                      case 'heal':
+                          const newHp = Math.min(updatedAttacker.maxHp, updatedAttacker.hp + (ability.power || 0));
+                          addToLog(`Opponent's ${updatedAttacker.name} heals!`);
+                          updatedAttacker.hp = newHp;
+                          break;
+                      default:
+                          break;
+                  }
+                  
+                  if (updatedAttacker.energy <= 0) {
+                      updatedAttacker.isSleeping = true;
+                      addToLog(`Opponent's ${updatedAttacker.name} ran out of energy and fell asleep!`);
+                  }
+              
+                  updateCreatureState(updatedAttacker.id, { ...updatedAttacker }, 'opponent');
+                  setIsPlayerTurn(true);
+              };
+              performOpponentTurn(activeOpponentCreature, activePlayerCreature, abilityToUse);
             }, 1500);
             return () => clearTimeout(timeout);
         } else {
-             addToLog(`${activeOpponentCreature.name} has no energy to use an ability!`);
+             addToLog(`${activeOpponentCreature.name} has no energy to use an ability and fell asleep!`);
              updateCreatureState(activeOpponentCreature.id, { isSleeping: true }, 'opponent');
              setTimeout(() => setIsPlayerTurn(true), 1500);
         }
       } else {
-        setIsPlayerTurn(true); // Skip turn if opponent can't act
+        setIsPlayerTurn(true);
       }
     }
-  }, [isPlayerTurn, isBattleOver, handleAbilityUse, playerTeam, opponentTeam, activePlayerCreature, activeOpponentCreature, showTeamSelection, updateCreatureState]);
+  }, [isPlayerTurn, isBattleOver, playerTeam, opponentTeam, activePlayerCreature, activeOpponentCreature, showTeamSelection, updateCreatureState]);
 
   useEffect(() => {
     if (!isBattleOver) {
@@ -271,21 +313,6 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
   }, [playerTeam, opponentTeam, isBattleOver, checkBattleEnd]);
 
 
-  const handleUseAbility = () => {
-    if (selectedAbility && activePlayerCreature) {
-        if (activePlayerCreature.energy < selectedAbility.energyCost) {
-            toast({ variant: "destructive", title: "Not enough energy!", description: `${activePlayerCreature.name} doesn't have enough energy for ${selectedAbility.name}.` });
-            return;
-        }
-        const defender = ['attack', 'debuff'].includes(selectedAbility.type) ? activeOpponentCreature : null;
-        if (defender === null && ['attack', 'debuff'].includes(selectedAbility.type)) {
-            addToLog("No target for ability!");
-            return;
-        }
-        handleAbilityUse(activePlayerCreature, defender, selectedAbility);
-    }
-  }
-
   const handleSwitchCreature = (creature: Creature) => {
     if (creature.id !== activePlayerCreature?.id && creature.hp > 0 && !isBattleOver) {
         if (remainingSwitches <= 0) {
@@ -293,22 +320,19 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
             return;
         }
         
-        // Find the creature in the current team to get the most up-to-date state
         const creatureToSwitch = playerTeam.find(c => c.id === creature.id);
         if(!creatureToSwitch) return;
 
-        // Switching replenishes energy
         const newActiveCreature = { ...creatureToSwitch, energy: creatureToSwitch.maxEnergy, isSleeping: false };
         
-        const newPlayerTeam = playerTeam.map(c => 
-            c.id === creature.id ? { ...c, energy: c.maxEnergy, isSleeping: false } : c
-        );
+        const newPlayerTeam = playerTeam.map(c => c.id === creature.id ? { ...c, energy: c.maxEnergy, isSleeping: false } : c);
         setPlayerTeam(newPlayerTeam);
         setActivePlayerCreature(newActiveCreature);
 
         addToLog(`Go, ${creature.name}!`);
         setShowSwitchDialog(false);
         setRemainingSwitches(prev => prev - 1);
+        setIsPlayerTurn(true); // Player keeps the turn after switching
     }
   }
 
@@ -355,21 +379,44 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     )
   }
 
+  const handleAbilitySelect = (ability: Ability) => {
+      if (!canPlayerAct) return;
+      if (activePlayerCreature && activePlayerCreature.energy < ability.energyCost) {
+          toast({ variant: "destructive", title: "Not enough energy!", description: `${activePlayerCreature.name} doesn't have enough energy for ${ability.name}.` });
+          return;
+      }
+      setSelectedAbility(ability);
+  }
+
   return (
     <Card className="overflow-hidden">
       <CardHeader>
         <CardTitle className="font-headline text-2xl flex justify-between items-center">
             <span>Battle Arena</span>
-            <div className="font-bold text-sm text-muted-foreground">Switches Left: {remainingSwitches}</div>
+            <div className='flex items-center gap-4'>
+                <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setShowSwitchDialog(true)}
+                    disabled={!isPlayerTurn || isBattleOver || playerTeam.filter(c => c.hp > 0).length <= 1 || remainingSwitches <= 0 || activePlayerCreature?.isSleeping}
+                 >
+                  <Repeat className="mr-2 h-4 w-4"/> Switch ({remainingSwitches} left)
+                </Button>
+            </div>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Creatures Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-            {/* Player Side */}
-            <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-11 gap-4 items-start">
+            <div className="space-y-4 md:col-span-5">
                 <h3 className="text-xl font-headline text-center text-green-400">Your Team</h3>
-                {activePlayerCreature && <CreatureCard creature={activePlayerCreature} showCurrentDefense />}
+                {activePlayerCreature && 
+                    <CreatureCard 
+                        creature={activePlayerCreature} 
+                        showCurrentDefense 
+                        isActionable={canPlayerAct}
+                        onAbilitySelect={handleAbilitySelect}
+                    />
+                }
                 <div className="flex justify-center gap-2">
                     {playerTeam.map(c => (
                         <button key={c.id} onClick={() => setShowSwitchDialog(true)} disabled={c.id === activePlayerCreature?.id || c.hp <= 0}>
@@ -379,101 +426,46 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
                 </div>
             </div>
 
-            {/* Opponent Side */}
-            <div className="space-y-4">
+            <div className="space-y-2 md:col-span-1 flex flex-col items-center justify-center h-full">
+                <Swords size={48} className="text-muted-foreground" />
+            </div>
+
+            <div className="space-y-4 md:col-span-5">
                 <h3 className="text-xl font-headline text-center text-red-400">Opponent</h3>
                 {activeOpponentCreature && <CreatureCard creature={activeOpponentCreature} showCurrentDefense />}
             </div>
         </div>
 
         <Separator className="my-4" />
-
-        {/* Log and Actions Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-          <div className="lg:col-span-2 space-y-2">
+        
+        <div className="space-y-2">
             <h3 className="font-headline text-lg text-center">Battle Log</h3>
-            <ScrollArea className="h-48 w-full rounded-md border p-4 bg-muted/50">
+            <ScrollArea className="h-40 w-full rounded-md border p-4 bg-muted/50">
                 {battleLog.map((log, index) => <p key={index} className="text-sm mb-1">{log}</p>)}
             </ScrollArea>
              {isBattleOver && (
-                <div className="text-center">
-                    <p className="font-bold text-lg">{opponentTeam.every(c => c.hp <= 0) ? 'VICTORY' : 'DEFEAT'}</p>
+                <div className="text-center p-4">
+                    <p className="font-bold text-2xl mb-2">{opponentTeam.every(c => c.hp <= 0) ? 'VICTORY' : 'DEFEAT'}</p>
                     <Button onClick={resetBattle} className="mt-2">New Battle</Button>
                 </div>
             )}
           </div>
-
-          <div className="lg:col-span-3 space-y-2">
-            <h3 className="font-headline text-lg text-center">Actions</h3>
-            {activePlayerCreature && activePlayerCreature.hp > 0 && !isBattleOver && (
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                    {activePlayerCreature.abilities.map(ability => (
-                        <Button 
-                            key={ability.name}
-                            variant={selectedAbility?.name === ability.name ? 'default' : 'outline'}
-                            onClick={() => setSelectedAbility(ability)}
-                            disabled={!canPlayerAct || activePlayerCreature.energy < ability.energyCost}
-                            className="h-auto py-2 flex flex-col items-center justify-center text-center relative"
-                        >
-                            <div className="flex items-center gap-2 font-bold">
-                                {ability.type === 'attack' && <Swords size={16} />}
-                                {ability.type === 'defense' && <Shield size={16} />}
-                                {ability.type === 'heal' && <Heart size={16} />}
-                                <span>{ability.name}</span>
-                            </div>
-                            <span className="text-xs text-muted-foreground px-1">{ability.description}</span>
-                            <div className="absolute top-1 right-1 flex items-center bg-primary text-primary-foreground text-xs font-bold px-1.5 py-0.5 rounded-full">
-                                {ability.type === 'attack' && ability.power && <span className="mr-1">{ability.power}</span>}
-                                <Zap size={10} className="inline-block" />
-                                <span className="ml-0.5">{ability.energyCost}</span>
-                            </div>
-                        </Button>
-                    ))}
-                </div>
-            )}
-             <div className="flex gap-2 pt-2">
-                <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                        <Button 
-                            disabled={!canPlayerAct || !selectedAbility}
-                            className="w-full"
-                        >
-                           <Swords className="mr-2 h-5 w-5"/> Use Ability
-                        </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Confirm Action</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                Are you sure you want {activePlayerCreature?.name} to use {selectedAbility?.name}?
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={handleUseAbility}>Confirm</AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
-                </AlertDialog>
-                <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => setShowSwitchDialog(true)}
-                    disabled={!isPlayerTurn || isBattleOver || playerTeam.filter(c => c.hp > 0).length <= 1 || remainingSwitches <= 0 || activePlayerCreature?.isSleeping}
-                 >
-                  <Repeat className="mr-2 h-5 w-5"/> Switch
-                </Button>
-                 <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => setShowTacticalAssistant(true)}
-                 >
-                  <Sparkles className="mr-2 h-5 w-5 text-accent"/> Assistant
-                </Button>
-            </div>
-          </div>
-        </div>
         
-        {/* Modals */}
+        <AlertDialog open={!!selectedAbility} onOpenChange={() => setSelectedAbility(null)}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Action</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        Are you sure you want {activePlayerCreature?.name} to use {selectedAbility?.name}?
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setSelectedAbility(null)}>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleAbilityUse}>Confirm</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+
         <Dialog open={showSwitchDialog} onOpenChange={setShowSwitchDialog}>
             <DialogContent>
                 <DialogHeader>
@@ -502,17 +494,6 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-
-        {showTacticalAssistant && activePlayerCreature && (
-            <TacticalAssistant 
-                isOpen={showTacticalAssistant}
-                onClose={() => setShowTacticalAssistant(false)}
-                playerCreatures={playerCreatures}
-                opponentCreatures={allOpponentCreatures}
-                playerTeam={playerTeam}
-                opponentTeam={opponentTeam}
-            />
-        )}
       </CardContent>
     </Card>
   );

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import type { Creature } from '@/types';
+import type { Creature, Ability } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
 
 interface CreatureCardProps {
   creature: Creature;
@@ -19,6 +20,8 @@ interface CreatureCardProps {
   onSelect?: (creature: Creature) => void;
   className?: string;
   showCurrentDefense?: boolean;
+  isActionable?: boolean;
+  onAbilitySelect?: (ability: Ability) => void;
 }
 
 const typeColors: { [key: string]: string } = {
@@ -30,7 +33,9 @@ const typeColors: { [key: string]: string } = {
   Umbra: 'bg-indigo-900 text-white',
 };
 
-export default function CreatureCard({ creature, isSelectable, isSelected, onSelect, className, showCurrentDefense }: CreatureCardProps) {
+export default function CreatureCard({ 
+    creature, isSelectable, isSelected, onSelect, className, showCurrentDefense, isActionable, onAbilitySelect 
+}: CreatureCardProps) {
   const healthPercentage = (creature.hp / creature.maxHp) * 100;
   const energyPercentage = (creature.energy / creature.maxEnergy) * 100;
 
@@ -105,15 +110,25 @@ export default function CreatureCard({ creature, isSelectable, isSelected, onSel
         <div>
             <h4 className="text-sm font-semibold mb-2 text-center text-muted-foreground">Abilities</h4>
             <TooltipProvider>
-              <div className="flex justify-center gap-2 flex-wrap">
+              <div className="grid grid-cols-2 gap-2">
                   {creature.abilities.map(ability => (
                       <Tooltip key={ability.name} delayDuration={100}>
                           <TooltipTrigger asChild>
-                            <Badge variant="secondary" className="cursor-help">{ability.name}</Badge>
+                            <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="h-auto py-1"
+                                disabled={!isActionable || creature.energy < ability.energyCost}
+                                onClick={() => onAbilitySelect?.(ability)}
+                            >
+                                {ability.name}
+                            </Button>
                           </TooltipTrigger>
                           <TooltipContent>
                               <p className="font-bold">{ability.name} ({ability.type})</p>
-                              <p className="text-sm">{ability.description}</p>
+                              <p className="text-sm max-w-xs">{ability.description}</p>
+                              {ability.power && <p className="text-xs">Power: {ability.power}</p>}
+                              {ability.defenseBoost && <p className="text-xs">Defense: +{ability.defenseBoost}</p>}
                               <p className="text-xs">Cost: {ability.energyCost} Energy</p>
                           </TooltipContent>
                       </Tooltip>
