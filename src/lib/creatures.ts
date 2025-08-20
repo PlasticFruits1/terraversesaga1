@@ -1,3 +1,4 @@
+
 import type { Creature } from '@/types';
 
 export const initialCreatures: Creature[] = [
@@ -55,81 +56,6 @@ export const initialCreatures: Creature[] = [
         { name: "Air Cutter", type: "attack", power: 32, description: "A sharp blade of wind.", energyCost: 25 }
     ]
   },
-];
-
-export const opponentCreatures: Creature[] = [
-    {
-    id: 101,
-    name: "Cragbeast",
-    type: "Terra",
-    hp: 70,
-    maxHp: 70,
-    attack: 55,
-    defense: 70,
-    energy: 100,
-    maxEnergy: 100,
-    imageUrl: "https://placehold.co/300x200.png",
-    aiHint: "mountain monster",
-    abilities: [
-        { name: "Tackle", type: "attack", power: 25, description: "A basic tackle.", energyCost: 15 },
-        { name: "Harden", type: "defense", defenseBoost: 15, description: "Tenses muscles to raise defense.", energyCost: 20 },
-        { name: "Rock Slide", type: "attack", power: 40, description: "Large boulders are hurled at the foe.", energyCost: 35 }
-    ]
-  },
-  {
-    id: 102,
-    name: "Sea Serpent",
-    type: "Aqua",
-    hp: 65,
-    maxHp: 65,
-    attack: 60,
-    defense: 55,
-    energy: 100,
-    maxEnergy: 100,
-    imageUrl: "https://placehold.co/300x200.png",
-    aiHint: "ocean dragon",
-    abilities: [
-        { name: "Water Gun", type: "attack", power: 30, description: "Squirts water to attack.", energyCost: 20 },
-        { name: "Dragon Dance", type: "buff", description: "Boosts its own Attack and Speed.", energyCost: 25 },
-        { name: "Aqua Tail", type: "attack", power: 38, description: "Swings its tail like a vicious wave.", energyCost: 30 }
-    ]
-  },
-  {
-    id: 103,
-    name: "Stormwing",
-    type: "Aero",
-    hp: 60,
-    maxHp: 60,
-    attack: 65,
-    defense: 50,
-    energy: 100,
-    maxEnergy: 100,
-    imageUrl: "https://placehold.co/300x200.png",
-    aiHint: "thunder bird",
-    abilities: [
-        { name: "Peck", type: "attack", power: 28, description: "Jabs the foe with its beak.", energyCost: 15 },
-        { name: "Thunder Shock", type: "attack", power: 32, description: "An electric shock.", energyCost: 25 },
-        { name: "Roost", type: "heal", power: 20, description: "Recovers some HP.", energyCost: 30 }
-    ]
-  },
-  {
-    id: 104,
-    name: "Pyre-hound",
-    type: "Ignis",
-    hp: 62,
-    maxHp: 62,
-    attack: 75,
-    defense: 50,
-    energy: 100,
-    maxEnergy: 100,
-    imageUrl: "https://placehold.co/300x200.png",
-    aiHint: "hell hound",
-    abilities: [
-        { name: "Ember", type: "attack", power: 30, description: "A weak fire attack that may burn.", energyCost: 20 },
-        { name: "Howl", type: "buff", description: "Raises its own attack stat.", energyCost: 15 },
-        { name: "Fire Fang", type: "attack", power: 40, description: "A fiery bite that may cause a burn.", energyCost: 30 }
-    ]
-  },
     {
     id: 4,
     name: "Ember-kit",
@@ -148,6 +74,87 @@ export const opponentCreatures: Creature[] = [
         { name: "Will-O-Wisp", type: "debuff", description: "Lowers the opponent's attack.", energyCost: 20 }
     ]
   },
+];
+
+const bossCreatures: Creature[] = [
+    {
+    id: 101,
+    name: "Terralord",
+    type: "Terra",
+    hp: 150,
+    maxHp: 150,
+    attack: 75,
+    defense: 90,
+    energy: 120,
+    maxEnergy: 120,
+    imageUrl: "https://placehold.co/300x200.png",
+    aiHint: "earth titan",
+    abilities: [
+        { name: "Tackle", type: "attack", power: 40, description: "A basic tackle.", energyCost: 15 },
+        { name: "Fortify", type: "defense", defenseBoost: 25, description: "Greatly raises defense.", energyCost: 25 },
+        { name: "Earthquake", type: "attack", power: 60, description: "A devastating ground-shaking attack.", energyCost: 40 }
+    ]
+  },
+  {
+    id: 102,
+    name: "Abyssal Leviathan",
+    type: "Aqua",
+    hp: 140,
+    maxHp: 140,
+    attack: 80,
+    defense: 70,
+    energy: 120,
+    maxEnergy: 120,
+    imageUrl: "https://placehold.co/300x200.png",
+    aiHint: "giant sea-dragon",
+    abilities: [
+        { name: "Tidal Wave", type: "attack", power: 45, description: "A huge wave crashes down.", energyCost: 25 },
+        { name: "Regenerate", type: "heal", power: 30, description: "Recovers a good amount of HP.", energyCost: 30 },
+        { name: "Dragon Pulse", type: "attack", power: 55, description: "A powerful draconic blast.", energyCost: 35 }
+    ]
+  },
+  {
+    id: 103,
+    name: "Thunder-roc",
+    type: "Aero",
+    hp: 130,
+    maxHp: 130,
+    attack: 85,
+    defense: 65,
+    energy: 120,
+    maxEnergy: 120,
+    imageUrl: "https://placehold.co/300x200.png",
+    aiHint: "giant thunder-bird",
+    abilities: [
+        { name: "Drill Peck", type: "attack", power: 50, description: "A powerful, spinning beak attack.", energyCost: 25 },
+        { name: "Thunder", type: "attack", power: 65, description: "A massive bolt of lightning.", energyCost: 40 },
+        { name: "Roost", type: "heal", power: 25, description: "Recovers some HP.", energyCost: 30 }
+    ]
+  },
+  {
+    id: 104,
+    name: "Inferno Cerberus",
+    type: "Ignis",
+    hp: 135,
+    maxHp: 135,
+    attack: 95,
+    defense: 60,
+    energy: 120,
+    maxEnergy: 120,
+    imageUrl: "https://placehold.co/300x200.png",
+    aiHint: "three-headed fire-hound",
+    abilities: [
+        { name: "Scorching Bite", type: "attack", power: 50, description: "A vicious, fiery bite.", energyCost: 25 },
+        { name: "Howl", type: "buff", description: "Raises its own attack stat.", energyCost: 15 },
+        { name: "Hellfire", type: "attack", power: 70, description: "Engulfs the foe in black flames.", energyCost: 45 }
+    ]
+  },
+];
+
+export const opponentCreatures: Creature[] = [
+  ...bossCreatures,
+  // You can add more regular creatures here if you want them to appear as non-bosses
+  // For now, only bosses will be opponents
   {
     id: 5,
     name: "Glimmerwisp",
@@ -185,3 +192,5 @@ export const opponentCreatures: Creature[] = [
     ]
   },
 ];
+
+    

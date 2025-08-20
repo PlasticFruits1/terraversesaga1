@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -30,14 +31,28 @@ export default function TacticalAssistant({
     isOpen, onClose, playerCreatures, opponentCreatures, playerTeam, opponentTeam 
 }: TacticalAssistantProps) {
   
-  const [creature1, setCreature1] = useState(playerTeam.find(c => c.hp > 0)?.name || '');
-  const [creature2, setCreature2] = useState(playerTeam.filter(c => c.hp > 0)[1]?.name || '');
-  const [opponent1, setOpponent1] = useState(opponentTeam.find(c => c.hp > 0)?.name || '');
-  const [opponent2, setOpponent2] = useState(opponentTeam.filter(c => c.hp > 0)[1]?.name || '');
+  const [creature1, setCreature1] = useState('');
+  const [creature2, setCreature2] = useState('');
+  const [opponent1, setOpponent1] = useState('');
+  const [opponent2, setOpponent2] = useState('');
 
   const [isPending, startTransition] = useTransition();
   const [suggestion, setSuggestion] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+        // Set defaults based on the current battle state when the dialog opens
+        setCreature1(playerTeam.find(c => c.hp > 0)?.name || '');
+        setCreature2(playerTeam.filter(c => c.hp > 0)[1]?.name || '');
+        setOpponent1(opponentTeam.find(c => c.hp > 0)?.name || '');
+        setOpponent2(opponentTeam.filter(c => c.hp > 0)[1]?.name || '');
+        
+        // Reset previous results
+        setSuggestion(null);
+        setError(null);
+    }
+  }, [isOpen, playerTeam, opponentTeam]);
 
   const handleSubmit = () => {
     setError(null);
@@ -53,7 +68,7 @@ export default function TacticalAssistant({
     };
 
     if(!input.creature1 || !input.opponentCreature1) {
-        setError("Please select at least one creature for each team.");
+        setError("Please select at least one creature for your team and one for the opponent.");
         return;
     }
 
@@ -86,25 +101,24 @@ export default function TacticalAssistant({
                     </SelectContent>
                 </Select>
                 <Select value={creature2} onValueChange={setCreature2}>
-                    <SelectTrigger><SelectValue placeholder="Select Creature 2" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="Select Creature 2 (Optional)" /></SelectTrigger>
                     <SelectContent>
+                         <SelectItem value="">None</SelectItem>
                          {playerCreatures.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
                     </SelectContent>
                 </Select>
             </div>
-            <h4 className="font-semibold">Opponent's Creatures</h4>
+            <h4 className="font-semibold">Opponent's Creature</h4>
             <div className="grid grid-cols-2 gap-4">
                 <Select value={opponent1} onValueChange={setOpponent1}>
-                    <SelectTrigger><SelectValue placeholder="Select Opponent 1" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="Select Opponent" /></SelectTrigger>
                     <SelectContent>
                         {opponentCreatures.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
                     </SelectContent>
                 </Select>
-                 <Select value={opponent2} onValueChange={setOpponent2}>
-                    <SelectTrigger><SelectValue placeholder="Select Opponent 2" /></SelectTrigger>
-                    <SelectContent>
-                        {opponentCreatures.map(c => <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>)}
-                    </SelectContent>
+                 <Select value={opponent2} onValueChange={setOpponent2} disabled>
+                    <SelectTrigger><SelectValue placeholder="N/A" /></SelectTrigger>
+                    <SelectContent />
                 </Select>
             </div>
         </div>
@@ -144,3 +158,5 @@ export default function TacticalAssistant({
     </Dialog>
   );
 }
+
+    

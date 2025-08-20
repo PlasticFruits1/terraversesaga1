@@ -71,12 +71,14 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     setPlayerTeam(livePlayerTeam);
     setActivePlayerCreature(livePlayerTeam[0]);
 
+    // Select one powerful opponent instead of a team
     const shuffledOpponents = [...allOpponentCreatures].sort(() => 0.5 - Math.random());
-    const liveOpponentTeam = shuffledOpponents.slice(0, 3).map(c => ({...c, hp: c.maxHp, energy: c.maxEnergy, defense: c.defense, isSleeping: false}));
+    const bossCreature = shuffledOpponents[0];
+    const liveOpponentTeam = [{...bossCreature, hp: bossCreature.maxHp, energy: bossCreature.maxEnergy, defense: bossCreature.defense, isSleeping: false}];
     setOpponentTeam(liveOpponentTeam);
     setActiveOpponentCreature(liveOpponentTeam[0]);
 
-    setBattleLog(['Battle begins!']);
+    setBattleLog([`A wild ${liveOpponentTeam[0].name} appears!`, 'Battle begins!']);
     setIsPlayerTurn(true);
     setIsBattleOver(false);
     setShowTeamSelection(false);
@@ -288,6 +290,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
         const creatureToSwitch = playerTeam.find(c => c.id === creature.id);
         if(!creatureToSwitch) return;
 
+        // Switching replenishes energy
         const newActiveCreature = { ...creatureToSwitch, energy: creatureToSwitch.maxEnergy };
         
         // Update the state of the specific creature in the team array
@@ -300,7 +303,9 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
         addToLog(`Go, ${creature.name}!`);
         setShowSwitchDialog(false);
         setRemainingSwitches(prev => prev - 1);
-        setIsPlayerTurn(false);
+        
+        // Player does NOT lose their turn after switching
+        // setIsPlayerTurn(false);
     }
   }
 
@@ -381,15 +386,8 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
 
             {/* Opponent Side */}
             <div className="space-y-4 md:col-span-1">
-                <h3 className="text-xl font-headline text-center text-red-400">Opponent Team</h3>
+                <h3 className="text-xl font-headline text-center text-red-400">Opponent</h3>
                 {activeOpponentCreature && <CreatureCard creature={activeOpponentCreature} showCurrentDefense />}
-                 <div className="flex justify-center gap-2">
-                    {opponentTeam.map(c => (
-                        <div key={c.id}>
-                            <img src={c.imageUrl} alt={c.name} className={`w-12 h-12 rounded-full border-2 ${c.id === activeOpponentCreature?.id ? 'border-destructive' : 'border-muted'} ${c.hp <= 0 ? 'grayscale opacity-50' : ''}`} />
-                        </div>
-                    ))}
-                </div>
             </div>
         </div>
         <Separator className="my-6" />
@@ -479,14 +477,14 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
                 </DialogHeader>
                 <div className="grid grid-cols-3 gap-4 py-4">
                     {playerTeam.map(c => (
-                        <CreatureCard
-                            key={c.id}
-                            creature={c}
-                            isSelectable
-                            isSelected={c.id === activePlayerCreature?.id}
-                            onSelect={() => handleSwitchCreature(c)}
-                            className={`w-full ${c.id === activePlayerCreature?.id || c.hp <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        />
+                        <div key={c.id} onClick={() => handleSwitchCreature(c)} className={`cursor-pointer ${c.id === activePlayerCreature?.id || c.hp <= 0 ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                            <CreatureCard
+                                creature={c}
+                                isSelectable={!(c.id === activePlayerCreature?.id || c.hp <= 0)}
+                                isSelected={c.id === activePlayerCreature?.id}
+                                className="w-full"
+                            />
+                        </div>
                     ))}
                 </div>
                 <DialogFooter>
@@ -515,3 +513,5 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     </Card>
   );
 }
+
+    
