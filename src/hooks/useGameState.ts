@@ -7,9 +7,20 @@ import { useToast } from './use-toast';
 
 const GAME_SAVE_KEY = 'terraverseSaga_gameState';
 
+// Function to create a deep copy and initialize runtime properties
+const initializeCreatures = (creatures: Creature[]): Creature[] => {
+    return JSON.parse(JSON.stringify(creatures)).map((c: Creature) => ({
+        ...c,
+        hp: c.maxHp,
+        energy: c.maxEnergy,
+        isSleeping: false,
+    }));
+};
+
+
 const initialGameState: GameState = {
-  playerCreatures: JSON.parse(JSON.stringify(initialCreatures)), // Deep copy to allow for modification
-  opponentCreatures: JSON.parse(JSON.stringify(initialOpponentCreatures)),
+  playerCreatures: initializeCreatures(initialCreatures),
+  opponentCreatures: initializeCreatures(initialOpponentCreatures),
 };
 
 export function useGameState() {
@@ -20,7 +31,11 @@ export function useGameState() {
     try {
       const savedGame = localStorage.getItem(GAME_SAVE_KEY);
       if (savedGame) {
-        setGameState(JSON.parse(savedGame));
+        const loadedState = JSON.parse(savedGame);
+        // Ensure creatures have their runtime stats initialized
+        loadedState.playerCreatures = initializeCreatures(loadedState.playerCreatures);
+        loadedState.opponentCreatures = initializeCreatures(loadedState.opponentCreatures);
+        setGameState(loadedState);
       } else {
         setGameState(initialGameState);
       }
@@ -46,7 +61,10 @@ export function useGameState() {
     try {
       const savedGame = localStorage.getItem(GAME_SAVE_KEY);
       if (savedGame) {
-        setGameState(JSON.parse(savedGame));
+        const loadedState = JSON.parse(savedGame);
+        loadedState.playerCreatures = initializeCreatures(loadedState.playerCreatures);
+        loadedState.opponentCreatures = initializeCreatures(loadedState.opponentCreatures);
+        setGameState(loadedState);
         toast({ title: "Game Loaded!", description: "Your saved progress has been loaded." });
       } else {
         toast({ title: "No Save Data", description: "No saved game found. Starting fresh." });
@@ -60,10 +78,9 @@ export function useGameState() {
 
   const resetGame = useCallback(() => {
     localStorage.removeItem(GAME_SAVE_KEY);
-    // Create deep copies to prevent mutation of the original constant objects
     const freshState: GameState = {
-        playerCreatures: JSON.parse(JSON.stringify(initialCreatures)),
-        opponentCreatures: JSON.parse(JSON.stringify(initialOpponentCreatures)),
+        playerCreatures: initializeCreatures(initialCreatures),
+        opponentCreatures: initializeCreatures(initialOpponentCreatures),
     };
     setGameState(freshState);
     toast({ title: "Game Reset!", description: "Your game has been reset to its initial state." });
@@ -84,7 +101,7 @@ export function useGameState() {
             });
             return {
                 ...prevState,
-                playerCreatures: [...prevState.playerCreatures, ...newCreatures]
+                playerCreatures: [...prevState.playerCreatures, ...initializeCreatures(newCreatures)]
             }
         }
         return prevState;

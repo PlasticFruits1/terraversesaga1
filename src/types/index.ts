@@ -9,6 +9,7 @@ export interface Ability {
   defenseBoost?: number;
   effect?: string;
   description: string;
+  energyCost: number;
 }
 
 export interface Creature {
@@ -19,9 +20,12 @@ export interface Creature {
   maxHp: number;
   attack: number;
   defense: number;
+  energy: number;
+  maxEnergy: number;
   imageUrl: string;
   aiHint: string;
   abilities: Ability[];
+  isSleeping?: boolean;
 }
 
 export interface GameState {

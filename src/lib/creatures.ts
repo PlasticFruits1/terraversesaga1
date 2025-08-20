@@ -9,12 +9,14 @@ export const initialCreatures: Creature[] = [
     maxHp: 55,
     attack: 45,
     defense: 60,
+    energy: 100,
+    maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "rock golem",
     abilities: [
-      { name: "Rock Throw", type: "attack", power: 20, description: "Hurls a small rock." },
-      { name: "Stone Skin", type: "defense", defenseBoost: 10, description: "Hardens skin, increasing defense." },
-      { name: "Tremor", type: "attack", power: 30, description: "A lesser ground-shaking attack." }
+      { name: "Rock Throw", type: "attack", power: 20, description: "Hurls a small rock.", energyCost: 15 },
+      { name: "Stone Skin", type: "defense", defenseBoost: 10, description: "Hardens skin, increasing defense.", energyCost: 20 },
+      { name: "Tremor", type: "attack", power: 30, description: "A lesser ground-shaking attack.", energyCost: 25 }
     ]
   },
   {
@@ -25,12 +27,14 @@ export const initialCreatures: Creature[] = [
     maxHp: 45,
     attack: 55,
     defense: 40,
+    energy: 100,
+    maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "water wolf",
     abilities: [
-        { name: "Bite", type: "attack", power: 22, description: "A sharp, quick bite." },
-        { name: "Aqua Jet", type: "attack", power: 18, description: "Slam into the foe with high speed." },
-        { name: "Soothing Mist", type: 'heal', power: 15, description: 'Heals some HP.' }
+        { name: "Bite", type: "attack", power: 22, description: "A sharp, quick bite.", energyCost: 15 },
+        { name: "Aqua Jet", type: "attack", power: 18, description: "Slam into the foe with high speed.", energyCost: 20 },
+        { name: "Soothing Mist", type: 'heal', power: 15, description: 'Heals some HP.', energyCost: 30 }
     ]
   },
   {
@@ -41,12 +45,14 @@ export const initialCreatures: Creature[] = [
     maxHp: 40,
     attack: 50,
     defense: 35,
+    energy: 100,
+    maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "airborne manta",
     abilities: [
-        { name: "Gust", type: "attack", power: 25, description: "A quick blast of wind." },
-        { name: "Tailwind", type: "buff", description: "Raises speed for a few turns." },
-        { name: "Air Cutter", type: "attack", power: 32, description: "A sharp blade of wind." }
+        { name: "Gust", type: "attack", power: 25, description: "A quick blast of wind.", energyCost: 15 },
+        { name: "Tailwind", type: "buff", description: "Raises speed for a few turns.", energyCost: 20 },
+        { name: "Air Cutter", type: "attack", power: 32, description: "A sharp blade of wind.", energyCost: 25 }
     ]
   },
 ];
@@ -60,12 +66,14 @@ export const opponentCreatures: Creature[] = [
     maxHp: 70,
     attack: 55,
     defense: 70,
+    energy: 100,
+    maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "mountain monster",
     abilities: [
-        { name: "Tackle", type: "attack", power: 25, description: "A basic tackle." },
-        { name: "Harden", type: "defense", defenseBoost: 15, description: "Tenses muscles to raise defense." },
-        { name: "Rock Slide", type: "attack", power: 40, description: "Large boulders are hurled at the foe." }
+        { name: "Tackle", type: "attack", power: 25, description: "A basic tackle.", energyCost: 15 },
+        { name: "Harden", type: "defense", defenseBoost: 15, description: "Tenses muscles to raise defense.", energyCost: 20 },
+        { name: "Rock Slide", type: "attack", power: 40, description: "Large boulders are hurled at the foe.", energyCost: 35 }
     ]
   },
   {
@@ -76,12 +84,14 @@ export const opponentCreatures: Creature[] = [
     maxHp: 65,
     attack: 60,
     defense: 55,
+    energy: 100,
+    maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "ocean dragon",
     abilities: [
-        { name: "Water Gun", type: "attack", power: 30, description: "Squirts water to attack." },
-        { name: "Dragon Dance", type: "buff", description: "Boosts its own Attack and Speed." },
-        { name: "Aqua Tail", type: "attack", power: 38, description: "Swings its tail like a vicious wave." }
+        { name: "Water Gun", type: "attack", power: 30, description: "Squirts water to attack.", energyCost: 20 },
+        { name: "Dragon Dance", type: "buff", description: "Boosts its own Attack and Speed.", energyCost: 25 },
+        { name: "Aqua Tail", type: "attack", power: 38, description: "Swings its tail like a vicious wave.", energyCost: 30 }
     ]
   },
   {
@@ -92,12 +102,14 @@ export const opponentCreatures: Creature[] = [
     maxHp: 60,
     attack: 65,
     defense: 50,
+    energy: 100,
+    maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "thunder bird",
     abilities: [
-        { name: "Peck", type: "attack", power: 28, description: "Jabs the foe with its beak." },
-        { name: "Thunder Shock", type: "attack", power: 32, description: "An electric shock." },
-        { name: "Roost", type: "heal", power: 20, description: "Recovers some HP." }
+        { name: "Peck", type: "attack", power: 28, description: "Jabs the foe with its beak.", energyCost: 15 },
+        { name: "Thunder Shock", type: "attack", power: 32, description: "An electric shock.", energyCost: 25 },
+        { name: "Roost", type: "heal", power: 20, description: "Recovers some HP.", energyCost: 30 }
     ]
   },
   {
@@ -108,12 +120,14 @@ export const opponentCreatures: Creature[] = [
     maxHp: 62,
     attack: 75,
     defense: 50,
+    energy: 100,
+    maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "hell hound",
     abilities: [
-        { name: "Ember", type: "attack", power: 30, description: "A weak fire attack that may burn." },
-        { name: "Howl", type: "buff", description: "Raises its own attack stat." },
-        { name: "Fire Fang", type: "attack", power: 40, description: "A fiery bite that may cause a burn." }
+        { name: "Ember", type: "attack", power: 30, description: "A weak fire attack that may burn.", energyCost: 20 },
+        { name: "Howl", type: "buff", description: "Raises its own attack stat.", energyCost: 15 },
+        { name: "Fire Fang", type: "attack", power: 40, description: "A fiery bite that may cause a burn.", energyCost: 30 }
     ]
   },
     {
@@ -124,12 +138,14 @@ export const opponentCreatures: Creature[] = [
     maxHp: 50,
     attack: 65,
     defense: 40,
+    energy: 100,
+    maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "fire fox",
     abilities: [
-        { name: "Scratch", type: "attack", power: 20, description: "A basic scratch attack." },
-        { name: "Flame Wheel", type: "attack", power: 35, description: "A fiery spinning tackle." },
-        { name: "Will-O-Wisp", type: "debuff", description: "Lowers the opponent's attack." }
+        { name: "Scratch", type: "attack", power: 20, description: "A basic scratch attack.", energyCost: 10 },
+        { name: "Flame Wheel", type: "attack", power: 35, description: "A fiery spinning tackle.", energyCost: 25 },
+        { name: "Will-O-Wisp", type: "debuff", description: "Lowers the opponent's attack.", energyCost: 20 }
     ]
   },
   {
@@ -140,12 +156,14 @@ export const opponentCreatures: Creature[] = [
     maxHp: 60,
     attack: 30,
     defense: 50,
+    energy: 100,
+    maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "light spirit",
     abilities: [
-        { name: "Flash", type: "debuff", description: "Lowers opponent's accuracy." },
-        { name: "Light Screen", type: "defense", defenseBoost: 25, description: "A screen of light that boosts defense." },
-        { name: "Heal Pulse", type: "heal", power: 25, description: "Heals for a small amount." }
+        { name: "Flash", type: "debuff", description: "Lowers opponent's accuracy.", energyCost: 15 },
+        { name: "Light Screen", type: "defense", defenseBoost: 25, description: "A screen of light that boosts defense.", energyCost: 30 },
+        { name: "Heal Pulse", type: "heal", power: 25, description: "Heals for a small amount.", energyCost: 30 }
     ]
   },
   {
@@ -156,12 +174,14 @@ export const opponentCreatures: Creature[] = [
     maxHp: 48,
     attack: 58,
     defense: 48,
+    energy: 100,
+    maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
     aiHint: "shadow spider",
     abilities: [
-        { name: "Poison Sting", type: "attack", power: 25, description: "A venomous jab." },
-        { name: "Shadow Sneak", type: "attack", power: 30, description: "Attacks from the shadows." },
-        { name: "Fade", type: "defense", defenseBoost: 18, description: "Fades into the darkness, raising defense." }
+        { name: "Poison Sting", type: "attack", power: 25, description: "A venomous jab.", energyCost: 20 },
+        { name: "Shadow Sneak", type: "attack", power: 30, description: "Attacks from the shadows.", energyCost: 25 },
+        { name: "Fade", type: "defense", defenseBoost: 18, description: "Fades into the darkness, raising defense.", energyCost: 20 }
     ]
   },
 ];

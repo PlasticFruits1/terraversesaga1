@@ -3,7 +3,7 @@ import type { Creature } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Heart, Swords, Shield } from 'lucide-react';
+import { Heart, Swords, Shield, Zap } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -31,6 +31,7 @@ const typeColors: { [key: string]: string } = {
 
 export default function CreatureCard({ creature, isSelectable, isSelected, onSelect, className, showCurrentDefense }: CreatureCardProps) {
   const healthPercentage = (creature.hp / creature.maxHp) * 100;
+  const energyPercentage = (creature.energy / creature.maxEnergy) * 100;
 
   return (
     <Card 
@@ -45,15 +46,20 @@ export default function CreatureCard({ creature, isSelectable, isSelected, onSel
                     <Badge className={`${typeColors[creature.type]} mt-1`}>{creature.type}</Badge>
                 </CardDescription>
             </div>
-             <div className="text-right">
-                <div className="flex items-center gap-1 justify-end font-bold text-lg">
-                    <Heart className="h-5 w-5 text-red-500" />
+             <div className="text-right text-sm">
+                <div className="flex items-center gap-1 justify-end font-bold">
+                    <Heart className="h-4 w-4 text-red-500" />
                     <span>{creature.hp} / {creature.maxHp}</span>
+                </div>
+                <div className="flex items-center gap-1 justify-end font-bold">
+                    <Zap className="h-4 w-4 text-yellow-400" />
+                    <span>{creature.energy} / {creature.maxEnergy}</span>
                 </div>
             </div>
         </div>
-        <div className="pt-2">
-            <Progress value={healthPercentage} aria-label={`${creature.name} health`} />
+        <div className="pt-2 space-y-1">
+            <Progress value={healthPercentage} aria-label={`${creature.name} health`} className="h-2"/>
+            <Progress value={energyPercentage} aria-label={`${creature.name} energy`} className="h-2" />
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-0">
@@ -65,6 +71,11 @@ export default function CreatureCard({ creature, isSelectable, isSelected, onSel
                 objectFit="cover"
                 data-ai-hint={creature.aiHint}
             />
+             {creature.isSleeping && (
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                  <p className="text-white font-bold text-2xl animate-pulse">Zzz...</p>
+              </div>
+            )}
         </div>
         
         <div className="grid grid-cols-2 gap-2 text-center text-sm mb-4">
@@ -91,7 +102,8 @@ export default function CreatureCard({ creature, isSelectable, isSelected, onSel
                           </TooltipTrigger>
                           <TooltipContent>
                               <p className="font-bold">{ability.name} ({ability.type})</p>
-                              <p>{ability.description}</p>
+                              <p className="text-sm">{ability.description}</p>
+                              <p className="text-xs">Cost: {ability.energyCost} Energy</p>
                           </TooltipContent>
                       </Tooltip>
                   ))}
