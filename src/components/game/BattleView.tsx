@@ -185,7 +185,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
   }, [playerTeam, opponentTeam]);
 
   const checkBattleEnd = useCallback(() => {
-    if (isBattleOver) return;
+    if (isBattleOver) return false;
 
     const playerTeamFainted = playerTeam.every(c => c.hp <= 0);
     const opponentTeamFainted = opponentTeam.every(c => c.hp <= 0);
@@ -193,18 +193,21 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     if (playerTeam.length > 0 && playerTeamFainted) {
         addToLog("You have been defeated!");
         setIsBattleOver(true);
+        return true;
     } else if (opponentTeam.length > 0 && opponentTeamFainted) {
         addToLog("You are victorious!");
         onBattleWin(opponentTeam);
         setIsBattleOver(true);
+        return true;
     }
+    return false;
   }, [playerTeam, opponentTeam, isBattleOver, onBattleWin]);
 
   // Main game loop effect
   useEffect(() => {
-    if (isBattleOver || showTeamSelection || !playerTeam.length || !opponentTeam.length) return;
+    if (showTeamSelection || !playerTeam.length || !opponentTeam.length) return;
 
-    checkBattleEnd();
+    if (checkBattleEnd()) return;
 
     // Handle fainted active creature
     if (activePlayerCreature?.hp <= 0) {
