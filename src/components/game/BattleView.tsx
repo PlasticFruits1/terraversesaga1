@@ -29,7 +29,6 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { initialCreatures } from '@/lib/creatures';
 
 interface BattleViewProps {
   playerCreatures: Creature[];
@@ -466,7 +465,17 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
             </div>
 
             <div className="space-y-2 md:col-span-1 flex flex-col items-center justify-center h-full">
-                <Swords size={48} className="text-muted-foreground" />
+                 <Swords size={48} className="text-muted-foreground my-4" />
+                 <ScrollArea className="h-40 w-full rounded-md border p-2 bg-muted/50 text-center">
+                    <h3 className="font-headline text-lg mb-2">Battle Log</h3>
+                    {battleLog.map((log, index) => <p key={index} className="text-sm mb-1">{log}</p>)}
+                </ScrollArea>
+                 {isBattleOver && (
+                    <div className="text-center p-4">
+                        <p className="font-bold text-2xl mb-2">{opponentTeam.every(c => c.hp <= 0) ? 'VICTORY' : 'DEFEAT'}</p>
+                        <Button onClick={resetBattle} className="mt-2">Continue Story</Button>
+                    </div>
+                )}
             </div>
 
             <div className="space-y-4 md:col-span-5">
@@ -474,21 +483,6 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
                 {activeOpponentCreature && <CreatureCard creature={activeOpponentCreature} showCurrentDefense />}
             </div>
         </div>
-
-        <Separator className="my-4" />
-        
-        <div className="space-y-2">
-            <h3 className="font-headline text-lg text-center">Battle Log</h3>
-            <ScrollArea className="h-40 w-full rounded-md border p-4 bg-muted/50">
-                {battleLog.map((log, index) => <p key={index} className="text-sm mb-1">{log}</p>)}
-            </ScrollArea>
-             {isBattleOver && (
-                <div className="text-center p-4">
-                    <p className="font-bold text-2xl mb-2">{opponentTeam.every(c => c.hp <= 0) ? 'VICTORY' : 'DEFEAT'}</p>
-                    <Button onClick={resetBattle} className="mt-2">Continue Story</Button>
-                </div>
-            )}
-          </div>
         
         <AlertDialog open={!!selectedAbility} onOpenChange={() => setSelectedAbility(null)}>
             <AlertDialogContent>
