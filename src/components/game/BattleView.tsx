@@ -70,16 +70,16 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
       return;
     }
 
-
-    const livePlayerTeam = selectedPlayerTeam.map(c => ({...c, hp: c.maxHp, energy: c.maxEnergy, defense: c.defense, isSleeping: false}));
-    setPlayerTeam(livePlayerTeam);
-    setActivePlayerCreature(livePlayerTeam[0]);
-
     const opponentCreature = allOpponentCreatures.find(c => c.id === storyChapter.opponentId);
     if (!opponentCreature) {
         toast({ variant: "destructive", title: "Error", description: "Opponent for this chapter not found." });
         return;
     }
+
+    const livePlayerTeam = selectedPlayerTeam.map(c => ({...c, hp: c.maxHp, energy: c.maxEnergy, defense: c.defense, isSleeping: false}));
+    setPlayerTeam(livePlayerTeam);
+    setActivePlayerCreature(livePlayerTeam[0]);
+
     const liveOpponentTeam = [{...opponentCreature, hp: opponentCreature.maxHp, energy: opponentCreature.maxEnergy, defense: opponentCreature.defense, isSleeping: false}];
     setOpponentTeam(liveOpponentTeam);
     setActiveOpponentCreature(liveOpponentTeam[0]);

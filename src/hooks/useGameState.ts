@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, type Dispatch, type SetStateAction } from 'react';
 import type { GameState, Creature } from '@/types';
-import { initialCreatures, opponentCreatures as initialOpponentCreatures } from '@/lib/creatures';
+import { initialCreatures, opponentCreatures } from '@/lib/creatures';
 import { useToast } from './use-toast';
 import { story } from '@/lib/story';
 
@@ -21,7 +21,7 @@ const initializeCreatures = (creatures: Creature[]): Creature[] => {
 
 const initialGameState: GameState = {
   playerCreatures: initializeCreatures(initialCreatures),
-  opponentCreatures: initializeCreatures(initialOpponentCreatures),
+  opponentCreatures: initializeCreatures(opponentCreatures),
   storyProgress: 0,
 };
 
@@ -36,7 +36,7 @@ export function useGameState() {
         const loadedState = JSON.parse(savedGame);
         // Ensure creatures have their runtime stats initialized
         loadedState.playerCreatures = initializeCreatures(loadedState.playerCreatures);
-        loadedState.opponentCreatures = initializeCreatures(loadedState.opponentCreatures);
+        loadedState.opponentCreatures = initializeCreatures(loadedState.opponentCreatures || opponentCreatures);
         if (loadedState.storyProgress === undefined) {
           loadedState.storyProgress = 0;
         }
@@ -68,7 +68,7 @@ export function useGameState() {
       if (savedGame) {
         const loadedState = JSON.parse(savedGame);
         loadedState.playerCreatures = initializeCreatures(loadedState.playerCreatures);
-        loadedState.opponentCreatures = initializeCreatures(loadedState.opponentCreatures);
+        loadedState.opponentCreatures = initializeCreatures(loadedState.opponentCreatures || opponentCreatures);
         if (loadedState.storyProgress === undefined) {
           loadedState.storyProgress = 0;
         }
@@ -89,7 +89,7 @@ export function useGameState() {
     const freshState: GameState = {
         ...initialGameState,
         playerCreatures: initializeCreatures(initialCreatures),
-        opponentCreatures: initializeCreatures(initialOpponentCreatures),
+        opponentCreatures: initializeCreatures(opponentCreatures),
     };
     setGameState(freshState);
     toast({ title: "Game Reset!", description: "Your game has been reset to its initial state." });
