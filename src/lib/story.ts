@@ -1,3 +1,4 @@
+
 export interface StoryChapter {
     character: string;
     dialogue: string;
@@ -23,7 +24,7 @@ export const story: StoryChapter[] = [
         character: "Narrator",
         dialogue: "A furious Stoneling blocks your path!",
         isBattle: true,
-        opponentId: 1, // ID of Stoneling from creatures.ts
+        opponentId: 21, // ID of Stoneling from creatures.ts
     },
     {
         character: "Mysterious Elder",
@@ -41,7 +42,7 @@ export const story: StoryChapter[] = [
         character: "Narrator",
         dialogue: "A frenzied Aqua-pup surges from the waves!",
         isBattle: true,
-        opponentId: 2, // ID of Aqua-pup
+        opponentId: 22, // ID of Aqua-pup
     },
     {
         character: "Mysterious Elder",
@@ -53,7 +54,7 @@ export const story: StoryChapter[] = [
         character: "Narrator",
         dialogue: "A screeching Fetheray dives from the storm clouds!",
         isBattle: true,
-        opponentId: 3,
+        opponentId: 23,
     },
     {
         character: "Mysterious Elder",
