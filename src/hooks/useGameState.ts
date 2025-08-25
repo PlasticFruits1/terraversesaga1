@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, type Dispatch, type SetStateAction } from 'react';
@@ -15,6 +16,7 @@ const initializeCreatures = (creatures: Creature[]): Creature[] => {
         hp: c.maxHp,
         energy: c.maxEnergy,
         isSleeping: false,
+        defense: c.defense, // Ensure defense is initialized
     }));
 };
 
@@ -53,7 +55,12 @@ export function useGameState() {
   const saveGame = useCallback(() => {
     if (gameState) {
       try {
-        localStorage.setItem(GAME_SAVE_KEY, JSON.stringify(gameState));
+        const stateToSave = {
+            ...gameState,
+            // Don't save the full opponent list, just the template data
+            opponentCreatures: opponentCreatures, 
+        };
+        localStorage.setItem(GAME_SAVE_KEY, JSON.stringify(stateToSave));
         toast({ title: "Game Saved!", description: "Your progress has been saved locally." });
       } catch (error) {
         toast({ variant: "destructive", title: "Save Failed", description: "Could not save game state." });
@@ -67,8 +74,10 @@ export function useGameState() {
       const savedGame = localStorage.getItem(GAME_SAVE_KEY);
       if (savedGame) {
         const loadedState = JSON.parse(savedGame);
+        // Ensure creatures have their runtime stats initialized correctly
         loadedState.playerCreatures = initializeCreatures(loadedState.playerCreatures);
-        loadedState.opponentCreatures = initializeCreatures(loadedState.opponentCreatures || opponentCreatures);
+        // Always load the canonical opponent list and initialize it
+        loadedState.opponentCreatures = initializeCreatures(opponentCreatures);
         if (loadedState.storyProgress === undefined) {
           loadedState.storyProgress = 0;
         }
@@ -87,9 +96,9 @@ export function useGameState() {
   const resetGame = useCallback(() => {
     localStorage.removeItem(GAME_SAVE_KEY);
     const freshState: GameState = {
-        ...initialGameState,
         playerCreatures: initializeCreatures(initialCreatures),
         opponentCreatures: initializeCreatures(opponentCreatures),
+        storyProgress: 0,
     };
     setGameState(freshState);
     toast({ title: "Game Reset!", description: "Your game has been reset to its initial state." });
@@ -105,23 +114,24 @@ export function useGameState() {
 
         if (newCreatures.length > 0) {
             toast({
-                title: "Creatures Unlocked!",
+                title: "Creature Unlocked!",
                 description: `${newCreatures.map(c => c.name).join(', ')} have been added to your roster.`
             });
             return {
                 ...prevState,
                 playerCreatures: [...prevState.playerCreatures, ...initializeCreatures(newCreatures)]
-            }
+            };
         }
         return prevState;
     });
-  }, [toast, setGameState]);
+  }, [toast]);
 
   const advanceStory = useCallback(() => {
     setGameState(prevState => {
       if (!prevState) return null;
       const nextProgress = prevState.storyProgress + 1;
       if (nextProgress < story.length) {
+        console.log(`Advancing story to chapter ${nextProgress}`);
         return { ...prevState, storyProgress: nextProgress };
       }
       toast({ title: "To be continued...", description: "You have completed the current story." });

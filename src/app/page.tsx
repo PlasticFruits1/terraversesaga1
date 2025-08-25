@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -11,13 +12,14 @@ import StoryDialog from '@/components/game/StoryDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
 import { story, type StoryChapter } from '@/lib/story';
+import type { Creature } from '@/types';
 
 export default function Home() {
   const { gameState, saveGame, loadGame, resetGame, setGameState, unlockCreature, advanceStory } = useGameState();
 
   const handleBattleWin = (unlockedCreatures: Creature[]) => {
+    // Note: unlockCreature now implicitly advances the story
     unlockCreature(unlockedCreatures);
-    advanceStory();
   };
 
   if (!gameState) {
@@ -80,6 +82,7 @@ export default function Home() {
               storyChapter={currentChapter}
               setGameState={setGameState}
               onBattleWin={handleBattleWin}
+              onBattleEnd={advanceStory}
               allOpponentCreatures={gameState.opponentCreatures}
             />
           </TabsContent>

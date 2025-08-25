@@ -36,11 +36,12 @@ interface BattleViewProps {
   storyChapter?: StoryChapter;
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   onBattleWin: (creatures: Creature[]) => void;
+  onBattleEnd: () => void;
 }
 
 const MAX_SWITCHES = 3;
 
-export default function BattleView({ playerCreatures, allOpponentCreatures, storyChapter, setGameState, onBattleWin }: BattleViewProps) {
+export default function BattleView({ playerCreatures, allOpponentCreatures, storyChapter, setGameState, onBattleWin, onBattleEnd }: BattleViewProps) {
   const [playerTeam, setPlayerTeam] = useState<Creature[]>([]);
   const [opponentTeam, setOpponentTeam] = useState<Creature[]>([]);
   
@@ -59,6 +60,18 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
   const [remainingSwitches, setRemainingSwitches] = useState(MAX_SWITCHES);
 
   const { toast } = useToast();
+  
+  const resetBattleState = useCallback(() => {
+      setPlayerTeam([]);
+      setOpponentTeam([]);
+      setActivePlayerCreature(null);
+      setActiveOpponentCreature(null);
+      setBattleLog([]);
+      setIsBattleOver(false);
+      setSelectedAbility(null);
+      setSelectedPlayerTeam([]);
+      setShowTeamSelection(true);
+  }, []);
 
   const startBattle = useCallback(() => {
     if (selectedPlayerTeam.length !== 3) {
@@ -69,10 +82,11 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
       toast({ variant: "destructive", title: "No Battle", description: "There is no battle to start at this time." });
       return;
     }
-
+    
     const opponentCreature = allOpponentCreatures.find(c => c.id === storyChapter.opponentId);
     if (!opponentCreature) {
         toast({ variant: "destructive", title: "Error", description: "Opponent for this chapter not found." });
+        resetBattleState();
         return;
     }
 
@@ -89,7 +103,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
     setIsBattleOver(false);
     setShowTeamSelection(false);
     setRemainingSwitches(MAX_SWITCHES);
-  }, [selectedPlayerTeam, storyChapter, allOpponentCreatures, toast]);
+  }, [selectedPlayerTeam, storyChapter, allOpponentCreatures, toast, resetBattleState]);
   
   const handleSelectPlayerCreature = (creature: Creature) => {
     setSelectedPlayerTeam(prev => {
@@ -202,18 +216,19 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
   }, [activePlayerCreature, activeOpponentCreature, selectedAbility, playerTeam, opponentTeam, updateCreatureState]);
 
   const checkBattleEnd = useCallback(() => {
-    const playerTeamFainted = playerTeam.every(c => c.hp <= 0);
-    const opponentTeamFainted = opponentTeam.every(c => c.hp <= 0);
+    if (isBattleOver) return;
+    const playerTeamFainted = playerTeam.length > 0 && playerTeam.every(c => c.hp <= 0);
+    const opponentTeamFainted = opponentTeam.length > 0 && opponentTeam.every(c => c.hp <= 0);
 
-    if (playerTeam.length > 0 && playerTeamFainted) {
+    if (playerTeamFainted) {
         addToLog("You have been defeated!");
         setIsBattleOver(true);
-    } else if (opponentTeam.length > 0 && opponentTeamFainted) {
+    } else if (opponentTeamFainted) {
         addToLog("You are victorious!");
         onBattleWin(opponentTeam);
         setIsBattleOver(true);
     }
-  }, [playerTeam, opponentTeam, onBattleWin]);
+  }, [playerTeam, opponentTeam, onBattleWin, isBattleOver]);
 
   // Main game loop effect
   useEffect(() => {
@@ -258,7 +273,6 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
         if (usableAbilities.length > 0) {
             const abilityToUse = usableAbilities[Math.floor(Math.random() * usableAbilities.length)];
             const timeout = setTimeout(() => {
-              // We need to pass the arguments directly to a wrapper function
               const performOpponentTurn = (attacker: Creature, defender: Creature, ability: Ability) => {
                   let updatedAttacker = { ...attacker };
                   updatedAttacker.energy -= ability.energyCost;
@@ -317,10 +331,8 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
   }, [isPlayerTurn, isBattleOver, playerTeam, opponentTeam, activePlayerCreature, activeOpponentCreature, showTeamSelection, updateCreatureState]);
 
   useEffect(() => {
-    if (!isBattleOver) {
       checkBattleEnd();
-    }
-  }, [playerTeam, opponentTeam, isBattleOver, checkBattleEnd]);
+  }, [playerTeam, opponentTeam, checkBattleEnd]);
 
 
   const handleSwitchCreature = (creature: Creature) => {
@@ -345,37 +357,30 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
         setIsPlayerTurn(true); // Player keeps the turn after switching
     }
   }
-
-  const resetBattle = () => {
-    setShowTeamSelection(true);
-    setSelectedPlayerTeam([]);
-    setPlayerTeam([]);
-    setOpponentTeam([]);
-    setActivePlayerCreature(null);
-    setActiveOpponentCreature(null);
-    setBattleLog([]);
-    setIsBattleOver(false);
-    setSelectedAbility(null);
-  }
   
   const canPlayerAct = useMemo(() => {
     return isPlayerTurn && !isBattleOver && activePlayerCreature && activePlayerCreature.hp > 0 && !activePlayerCreature.isSleeping;
   }, [isPlayerTurn, isBattleOver, activePlayerCreature]);
 
   useEffect(() => {
-    if (!storyChapter || !storyChapter.isBattle) {
-      setShowTeamSelection(false);
+    if (!storyChapter) return;
+    
+    if (storyChapter.isBattle) {
+        // If we are entering a battle chapter, reset the battle state and show team selection.
+        if (!showTeamSelection) {
+            resetBattleState();
+        }
+        if (playerCreatures.length >= 3) {
+            setSelectedPlayerTeam(playerCreatures.slice(0, 3));
+        } else {
+            setSelectedPlayerTeam(playerCreatures);
+        }
     } else {
-      setShowTeamSelection(true);
-      // Automatically select first 3 creatures if available
-      if (playerCreatures.length >= 3) {
-        setSelectedPlayerTeam(playerCreatures.slice(0, 3));
-      } else {
-        setSelectedPlayerTeam(playerCreatures);
-      }
+        // If it's a story/dialogue chapter, make sure the battle UI is hidden.
+        resetBattleState();
+        setShowTeamSelection(false);
     }
-  }, [storyChapter, playerCreatures]);
-  
+  }, [storyChapter, playerCreatures, showTeamSelection, resetBattleState]);
 
   if (!storyChapter || !storyChapter.isBattle) {
     return (
@@ -426,6 +431,11 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
       setSelectedAbility(ability);
   }
 
+  const handleEndBattleClick = () => {
+    onBattleEnd();
+    resetBattleState();
+  }
+
   return (
     <Card className="overflow-hidden">
       <CardHeader>
@@ -473,7 +483,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
                  {isBattleOver && (
                     <div className="text-center p-4">
                         <p className="font-bold text-2xl mb-2">{opponentTeam.every(c => c.hp <= 0) ? 'VICTORY' : 'DEFEAT'}</p>
-                        <Button onClick={resetBattle} className="mt-2">Continue Story</Button>
+                        <Button onClick={handleEndBattleClick} className="mt-2">Continue Story</Button>
                     </div>
                 )}
             </div>
