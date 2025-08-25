@@ -3,77 +3,59 @@ import type { Creature } from '@/types';
 
 export const initialCreatures: Creature[] = [
   {
-    id: 1,
-    name: "Stoneling",
+    id: 5,
+    name: "Mossling",
     type: "Terra",
-    hp: 55,
-    maxHp: 55,
-    attack: 45,
-    defense: 60,
+    hp: 60,
+    maxHp: 60,
+    attack: 40,
+    defense: 65,
     energy: 100,
     maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
-    aiHint: "rock golem",
+    aiHint: "mossy rock creature",
     abilities: [
-      { name: "Rock Throw", type: "attack", power: 20, description: "Hurls a small rock.", energyCost: 15 },
-      { name: "Stone Skin", type: "defense", defenseBoost: 10, description: "Hardens skin, increasing defense.", energyCost: 20 },
-      { name: "Tremor", type: "attack", power: 30, description: "A lesser ground-shaking attack.", energyCost: 25 }
+      { name: "Vine Whip", type: "attack", power: 25, description: "Lashes out with a thorny vine.", energyCost: 15 },
+      { name: "Harden", type: "defense", defenseBoost: 15, description: "Tenses its body to raise defense.", energyCost: 20 },
+      { name: "Absorb", type: "heal", power: 15, description: "Drains a small amount of HP from the foe.", energyCost: 25 }
     ]
   },
   {
-    id: 2,
-    name: "Aqua-pup",
+    id: 6,
+    name: "Spark-fin",
     type: "Aqua",
     hp: 45,
     maxHp: 45,
-    attack: 55,
+    attack: 50,
     defense: 40,
     energy: 100,
     maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
-    aiHint: "water wolf",
+    aiHint: "electric fish",
     abilities: [
-        { name: "Bite", type: "attack", power: 22, description: "A sharp, quick bite.", energyCost: 15 },
-        { name: "Aqua Jet", type: "attack", power: 18, description: "Slam into the foe with high speed.", energyCost: 20 },
-        { name: "Soothing Mist", type: 'heal', power: 15, description: 'Heals some HP.', energyCost: 30 }
+      { name: "Water Gun", type: "attack", power: 22, description: "Squirts a jet of water.", energyCost: 15 },
+      { name: "Charge", type: "buff", description: "Gathers electricity to boost the next attack.", energyCost: 20 },
+      { name: "Splash", type: "debuff", description: "A useless splash that distracts the opponent.", energyCost: 10 }
     ]
   },
   {
-    id: 3,
-    name: "Fetheray",
+    id: 7,
+    name: "Aero-ling",
     type: "Aero",
-    hp: 40,
-    maxHp: 40,
-    attack: 50,
+    hp: 50,
+    maxHp: 50,
+    attack: 55,
     defense: 35,
     energy: 100,
     maxEnergy: 100,
     imageUrl: "https://placehold.co/300x200.png",
-    aiHint: "airborne manta",
+    aiHint: "small wind spirit",
     abilities: [
-        { name: "Gust", type: "attack", power: 25, description: "A quick blast of wind.", energyCost: 15 },
-        { name: "Tailwind", type: "buff", description: "Raises speed for a few turns.", energyCost: 20 },
-        { name: "Air Cutter", type: "attack", power: 32, description: "A sharp blade of wind.", energyCost: 25 }
+      { name: "Peck", type: "attack", power: 28, description: "A quick, sharp peck.", energyCost: 15 },
+      { name: "Screech", type: "debuff", description: "A loud screech that lowers opponent's defense.", energyCost: 20 },
+      { name: "Quick Attack", type: "attack", power: 20, description: "A speedy charge that always strikes first.", energyCost: 15 }
     ]
-  },
-    {
-    id: 4,
-    name: "Ember-kit",
-    type: "Ignis",
-    hp: 50,
-    maxHp: 50,
-    attack: 65,
-    defense: 40,
-    energy: 100,
-    maxEnergy: 100,
-    imageUrl: "https://placehold.co/300x200.png",
-    aiHint: "fire fox",
-    abilities: [
-        { name: "Scratch", type: "attack", power: 20, description: "A basic scratch attack.", energyCost: 10 },
-        { name: "Flame Wheel", type: "attack", power: 35, description: "A fiery spinning tackle.", energyCost: 25 },
-        { name: "Will-O-Wisp", type: "debuff", description: "Lowers the opponent's attack.", energyCost: 20 }
-    ]
-  },
+  }
 ];
 
 const regularOpponents: Creature[] = [
