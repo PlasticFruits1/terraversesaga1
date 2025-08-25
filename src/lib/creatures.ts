@@ -248,5 +248,3 @@ export const opponentCreatures: Creature[] = [
   ...regularOpponents,
   ...bossCreatures,
 ];
-
-    

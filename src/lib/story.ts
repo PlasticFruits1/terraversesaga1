@@ -350,5 +350,3 @@ export const story: StoryChapter[] = [
         isBattle: false,
     }
 ];
-
-    
