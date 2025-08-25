@@ -151,10 +151,79 @@ const bossCreatures: Creature[] = [
   },
 ];
 
-export const opponentCreatures: Creature[] = [
-  ...bossCreatures,
-  // You can add more regular creatures here if you want them to appear as non-bosses
-  // For now, only bosses will be opponents
+const regularOpponents = [
+  {
+    id: 1,
+    name: "Stoneling",
+    type: "Terra",
+    hp: 55,
+    maxHp: 55,
+    attack: 45,
+    defense: 60,
+    energy: 100,
+    maxEnergy: 100,
+    imageUrl: "https://placehold.co/300x200.png",
+    aiHint: "rock golem",
+    abilities: [
+      { name: "Rock Throw", type: "attack", power: 20, description: "Hurls a small rock.", energyCost: 15 },
+      { name: "Stone Skin", type: "defense", defenseBoost: 10, description: "Hardens skin, increasing defense.", energyCost: 20 },
+      { name: "Tremor", type: "attack", power: 30, description: "A lesser ground-shaking attack.", energyCost: 25 }
+    ]
+  },
+  {
+    id: 2,
+    name: "Aqua-pup",
+    type: "Aqua",
+    hp: 45,
+    maxHp: 45,
+    attack: 55,
+    defense: 40,
+    energy: 100,
+    maxEnergy: 100,
+    imageUrl: "https://placehold.co/300x200.png",
+    aiHint: "water wolf",
+    abilities: [
+        { name: "Bite", type: "attack", power: 22, description: "A sharp, quick bite.", energyCost: 15 },
+        { name: "Aqua Jet", type: "attack", power: 18, description: "Slam into the foe with high speed.", energyCost: 20 },
+        { name: "Soothing Mist", type: 'heal', power: 15, description: 'Heals some HP.', energyCost: 30 }
+    ]
+  },
+  {
+    id: 3,
+    name: "Fetheray",
+    type: "Aero",
+    hp: 40,
+    maxHp: 40,
+    attack: 50,
+    defense: 35,
+    energy: 100,
+    maxEnergy: 100,
+    imageUrl: "https://placehold.co/300x200.png",
+    aiHint: "airborne manta",
+    abilities: [
+        { name: "Gust", type: "attack", power: 25, description: "A quick blast of wind.", energyCost: 15 },
+        { name: "Tailwind", type: "buff", description: "Raises speed for a few turns.", energyCost: 20 },
+        { name: "Air Cutter", type: "attack", power: 32, description: "A sharp blade of wind.", energyCost: 25 }
+    ]
+  },
+    {
+    id: 4,
+    name: "Ember-kit",
+    type: "Ignis",
+    hp: 50,
+    maxHp: 50,
+    attack: 65,
+    defense: 40,
+    energy: 100,
+    maxEnergy: 100,
+    imageUrl: "https://placehold.co/300x200.png",
+    aiHint: "fire fox",
+    abilities: [
+        { name: "Scratch", type: "attack", power: 20, description: "A basic scratch attack.", energyCost: 10 },
+        { name: "Flame Wheel", type: "attack", power: 35, description: "A fiery spinning tackle.", energyCost: 25 },
+        { name: "Will-O-Wisp", type: "debuff", description: "Lowers the opponent's attack.", energyCost: 20 }
+    ]
+  },
   {
     id: 5,
     name: "Glimmerwisp",
@@ -193,4 +262,8 @@ export const opponentCreatures: Creature[] = [
   },
 ];
 
-    
+
+export const opponentCreatures: Creature[] = [
+  ...regularOpponents,
+  ...bossCreatures,
+];
