@@ -38,7 +38,8 @@ export function useGameState() {
         const loadedState = JSON.parse(savedGame);
         // Ensure creatures have their runtime stats initialized
         loadedState.playerCreatures = initializeCreatures(loadedState.playerCreatures);
-        loadedState.opponentCreatures = initializeCreatures(loadedState.opponentCreatures || opponentCreatures);
+        // ALWAYS load the canonical opponent list and initialize it
+        loadedState.opponentCreatures = initializeCreatures(opponentCreatures);
         if (loadedState.storyProgress === undefined) {
           loadedState.storyProgress = 0;
         }
