@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Creature, GameState, Ability } from '@/types';
+import type { StoryChapter } from '@/lib/story';
 import CreatureCard from './CreatureCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,17 +29,19 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { initialCreatures } from '@/lib/creatures';
 
 interface BattleViewProps {
   playerCreatures: Creature[];
   allOpponentCreatures: Creature[];
+  storyChapter?: StoryChapter;
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   onBattleWin: (creatures: Creature[]) => void;
 }
 
 const MAX_SWITCHES = 3;
 
-export default function BattleView({ playerCreatures, allOpponentCreatures, setGameState, onBattleWin }: BattleViewProps) {
+export default function BattleView({ playerCreatures, allOpponentCreatures, storyChapter, setGameState, onBattleWin }: BattleViewProps) {
   const [playerTeam, setPlayerTeam] = useState<Creature[]>([]);
   const [opponentTeam, setOpponentTeam] = useState<Creature[]>([]);
   
@@ -58,19 +61,27 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
 
   const { toast } = useToast();
 
-  const startBattle = () => {
+  const startBattle = useCallback(() => {
     if (selectedPlayerTeam.length !== 3) {
-      addToLog("You must select 3 creatures to start the battle.");
+      toast({ variant: "destructive", title: "Invalid Team", description: "You must select 3 creatures to start the battle." });
       return;
     }
+     if (!storyChapter || !storyChapter.isBattle) {
+      toast({ variant: "destructive", title: "No Battle", description: "There is no battle to start at this time." });
+      return;
+    }
+
 
     const livePlayerTeam = selectedPlayerTeam.map(c => ({...c, hp: c.maxHp, energy: c.maxEnergy, defense: c.defense, isSleeping: false}));
     setPlayerTeam(livePlayerTeam);
     setActivePlayerCreature(livePlayerTeam[0]);
 
-    const shuffledOpponents = [...allOpponentCreatures].sort(() => 0.5 - Math.random());
-    const bossCreature = shuffledOpponents[0];
-    const liveOpponentTeam = [{...bossCreature, hp: bossCreature.maxHp, energy: bossCreature.maxEnergy, defense: bossCreature.defense, isSleeping: false}];
+    const opponentCreature = allOpponentCreatures.find(c => c.id === storyChapter.opponentId);
+    if (!opponentCreature) {
+        toast({ variant: "destructive", title: "Error", description: "Opponent for this chapter not found." });
+        return;
+    }
+    const liveOpponentTeam = [{...opponentCreature, hp: opponentCreature.maxHp, energy: opponentCreature.maxEnergy, defense: opponentCreature.defense, isSleeping: false}];
     setOpponentTeam(liveOpponentTeam);
     setActiveOpponentCreature(liveOpponentTeam[0]);
 
@@ -79,7 +90,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     setIsBattleOver(false);
     setShowTeamSelection(false);
     setRemainingSwitches(MAX_SWITCHES);
-  };
+  }, [selectedPlayerTeam, storyChapter, allOpponentCreatures, toast]);
   
   const handleSelectPlayerCreature = (creature: Creature) => {
     setSelectedPlayerTeam(prev => {
@@ -352,6 +363,34 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
     return isPlayerTurn && !isBattleOver && activePlayerCreature && activePlayerCreature.hp > 0 && !activePlayerCreature.isSleeping;
   }, [isPlayerTurn, isBattleOver, activePlayerCreature]);
 
+  useEffect(() => {
+    if (!storyChapter || !storyChapter.isBattle) {
+      setShowTeamSelection(false);
+    } else {
+      setShowTeamSelection(true);
+      // Automatically select first 3 creatures if available
+      if (playerCreatures.length >= 3) {
+        setSelectedPlayerTeam(playerCreatures.slice(0, 3));
+      } else {
+        setSelectedPlayerTeam(playerCreatures);
+      }
+    }
+  }, [storyChapter, playerCreatures]);
+  
+
+  if (!storyChapter || !storyChapter.isBattle) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-headline text-2xl">Awaiting Story</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>Explore the world and progress the story to find your next battle.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (showTeamSelection) {
     return (
         <Card>
@@ -446,7 +485,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, setG
              {isBattleOver && (
                 <div className="text-center p-4">
                     <p className="font-bold text-2xl mb-2">{opponentTeam.every(c => c.hp <= 0) ? 'VICTORY' : 'DEFEAT'}</p>
-                    <Button onClick={resetBattle} className="mt-2">New Battle</Button>
+                    <Button onClick={resetBattle} className="mt-2">Continue Story</Button>
                 </div>
             )}
           </div>

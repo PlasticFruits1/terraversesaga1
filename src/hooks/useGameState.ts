@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, type Dispatch, type SetStateAction } 
 import type { GameState, Creature } from '@/types';
 import { initialCreatures, opponentCreatures as initialOpponentCreatures } from '@/lib/creatures';
 import { useToast } from './use-toast';
+import { story } from '@/lib/story';
 
 const GAME_SAVE_KEY = 'terraverseSaga_gameState';
 
@@ -21,6 +22,7 @@ const initializeCreatures = (creatures: Creature[]): Creature[] => {
 const initialGameState: GameState = {
   playerCreatures: initializeCreatures(initialCreatures),
   opponentCreatures: initializeCreatures(initialOpponentCreatures),
+  storyProgress: 0,
 };
 
 export function useGameState() {
@@ -35,6 +37,9 @@ export function useGameState() {
         // Ensure creatures have their runtime stats initialized
         loadedState.playerCreatures = initializeCreatures(loadedState.playerCreatures);
         loadedState.opponentCreatures = initializeCreatures(loadedState.opponentCreatures);
+        if (loadedState.storyProgress === undefined) {
+          loadedState.storyProgress = 0;
+        }
         setGameState(loadedState);
       } else {
         setGameState(initialGameState);
@@ -64,6 +69,9 @@ export function useGameState() {
         const loadedState = JSON.parse(savedGame);
         loadedState.playerCreatures = initializeCreatures(loadedState.playerCreatures);
         loadedState.opponentCreatures = initializeCreatures(loadedState.opponentCreatures);
+        if (loadedState.storyProgress === undefined) {
+          loadedState.storyProgress = 0;
+        }
         setGameState(loadedState);
         toast({ title: "Game Loaded!", description: "Your saved progress has been loaded." });
       } else {
@@ -79,6 +87,7 @@ export function useGameState() {
   const resetGame = useCallback(() => {
     localStorage.removeItem(GAME_SAVE_KEY);
     const freshState: GameState = {
+        ...initialGameState,
         playerCreatures: initializeCreatures(initialCreatures),
         opponentCreatures: initializeCreatures(initialOpponentCreatures),
     };
@@ -108,5 +117,17 @@ export function useGameState() {
     });
   }, [toast, setGameState]);
 
-  return { gameState, saveGame, loadGame, resetGame, setGameState: setGameState as Dispatch<SetStateAction<GameState>>, unlockCreature };
+  const advanceStory = useCallback(() => {
+    setGameState(prevState => {
+      if (!prevState) return null;
+      const nextProgress = prevState.storyProgress + 1;
+      if (nextProgress < story.length) {
+        return { ...prevState, storyProgress: nextProgress };
+      }
+      toast({ title: "To be continued...", description: "You have completed the current story." });
+      return prevState; // Or handle game completion
+    });
+  }, [toast]);
+
+  return { gameState, saveGame, loadGame, resetGame, setGameState: setGameState as Dispatch<SetStateAction<GameState>>, unlockCreature, advanceStory };
 }

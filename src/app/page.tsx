@@ -7,11 +7,18 @@ import GameHeader from '@/components/game/GameHeader';
 import RosterView from '@/components/game/RosterView';
 import BattleView from '@/components/game/BattleView';
 import MapView from '@/components/game/MapView';
+import StoryDialog from '@/components/game/StoryDialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent } from '@/components/ui/card';
+import { story, type StoryChapter } from '@/lib/story';
 
 export default function Home() {
-  const { gameState, saveGame, loadGame, resetGame, setGameState, unlockCreature } = useGameState();
+  const { gameState, saveGame, loadGame, resetGame, setGameState, unlockCreature, advanceStory } = useGameState();
+
+  const handleBattleWin = (unlockedCreatures: Creature[]) => {
+    unlockCreature(unlockedCreatures);
+    advanceStory();
+  };
 
   if (!gameState) {
     return (
@@ -40,9 +47,20 @@ export default function Home() {
     );
   }
 
+  const currentChapter: StoryChapter | undefined = story[gameState.storyProgress];
+  const showStoryDialog = currentChapter && !currentChapter.isBattle;
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
       <GameHeader onSave={saveGame} onLoad={loadGame} onReset={resetGame} />
+      
+      {showStoryDialog && (
+        <StoryDialog
+          chapter={currentChapter}
+          onNext={advanceStory}
+        />
+      )}
+
       <main className="flex-grow container mx-auto p-4 md:p-6">
         <Tabs defaultValue="battle" className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-card border rounded-lg">
@@ -59,9 +77,10 @@ export default function Home() {
           <TabsContent value="battle" className="mt-4">
             <BattleView
               playerCreatures={gameState.playerCreatures}
-              allOpponentCreatures={gameState.opponentCreatures}
+              storyChapter={currentChapter}
               setGameState={setGameState}
-              onBattleWin={unlockCreature}
+              onBattleWin={handleBattleWin}
+              allOpponentCreatures={gameState.opponentCreatures}
             />
           </TabsContent>
         </Tabs>

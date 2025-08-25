@@ -31,4 +31,5 @@ export interface Creature {
 export interface GameState {
   playerCreatures: Creature[];
   opponentCreatures: Creature[];
+  storyProgress: number;
 }
