@@ -363,25 +363,18 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
   }, [isPlayerTurn, isBattleOver, activePlayerCreature]);
 
   useEffect(() => {
-    if (!storyChapter) return;
-    
-    if (storyChapter.isBattle) {
-        // If we are entering a battle chapter, reset the battle state and show team selection.
-        if (!showTeamSelection) {
-            resetBattleState();
-        }
-        if (playerCreatures.length >= 3) {
-            setSelectedPlayerTeam(playerCreatures.slice(0, 3));
-        } else {
-            setSelectedPlayerTeam(playerCreatures);
-        }
+    if (storyChapter?.isBattle) {
+      if (playerCreatures.length >= 3) {
+        setSelectedPlayerTeam(playerCreatures.slice(0, 3));
+      } else {
+        setSelectedPlayerTeam(playerCreatures);
+      }
+      setShowTeamSelection(true);
     } else {
-        // If it's a story/dialogue chapter, make sure the battle UI is hidden.
-        resetBattleState();
-        setShowTeamSelection(false);
+      setShowTeamSelection(false);
     }
-  }, [storyChapter, playerCreatures, showTeamSelection, resetBattleState]);
-
+  }, [storyChapter, playerCreatures]);
+  
   if (!storyChapter || !storyChapter.isBattle) {
     return (
       <Card>
