@@ -8,7 +8,6 @@ import CreatureCard from './CreatureCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import { Swords, Repeat } from 'lucide-react';
 import {
   AlertDialog,
@@ -51,6 +50,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
   const [battleLog, setBattleLog] = useState<string[]>([]);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [isBattleOver, setIsBattleOver] = useState(false);
+  const [battleOutcome, setBattleOutcome] = useState<'win' | 'loss' | null>(null);
   const [selectedAbility, setSelectedAbility] = useState<Ability | null>(null);
   
   const [showTeamSelection, setShowTeamSelection] = useState(true);
@@ -68,6 +68,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
       setActiveOpponentCreature(null);
       setBattleLog([]);
       setIsBattleOver(false);
+      setBattleOutcome(null);
       setSelectedAbility(null);
       setSelectedPlayerTeam([]);
       setShowTeamSelection(true);
@@ -101,6 +102,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
     setBattleLog([`A wild ${liveOpponentTeam[0].name} appears!`, 'Battle begins!']);
     setIsPlayerTurn(true);
     setIsBattleOver(false);
+    setBattleOutcome(null);
     setShowTeamSelection(false);
     setRemainingSwitches(MAX_SWITCHES);
   }, [selectedPlayerTeam, storyChapter, allOpponentCreatures, toast, resetBattleState]);
@@ -223,12 +225,19 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
     if (playerTeamFainted) {
         addToLog("You have been defeated!");
         setIsBattleOver(true);
+        setBattleOutcome('loss');
     } else if (opponentTeamFainted) {
         addToLog("You are victorious!");
-        onBattleWin(opponentTeam);
         setIsBattleOver(true);
+        setBattleOutcome('win');
     }
-  }, [playerTeam, opponentTeam, onBattleWin, isBattleOver]);
+  }, [playerTeam, opponentTeam, isBattleOver]);
+
+   useEffect(() => {
+    if (battleOutcome === 'win') {
+      onBattleWin(opponentTeam);
+    }
+  }, [battleOutcome, opponentTeam, onBattleWin]);
 
   // Main game loop effect
   useEffect(() => {
@@ -365,13 +374,14 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
   useEffect(() => {
     if (storyChapter?.isBattle) {
       if (playerCreatures.length >= 3) {
-        setSelectedPlayerTeam(playerCreatures.slice(0, 3));
+        const initialTeam = playerCreatures.slice(0,3);
+        setSelectedPlayerTeam(initialTeam);
       } else {
         setSelectedPlayerTeam(playerCreatures);
       }
       setShowTeamSelection(true);
     } else {
-      setShowTeamSelection(false);
+        setShowTeamSelection(false);
     }
   }, [storyChapter, playerCreatures]);
   
@@ -475,7 +485,7 @@ export default function BattleView({ playerCreatures, allOpponentCreatures, stor
                 </ScrollArea>
                  {isBattleOver && (
                     <div className="text-center p-4">
-                        <p className="font-bold text-2xl mb-2">{opponentTeam.every(c => c.hp <= 0) ? 'VICTORY' : 'DEFEAT'}</p>
+                        <p className="font-bold text-2xl mb-2">{battleOutcome === 'win' ? 'VICTORY' : 'DEFEAT'}</p>
                         <Button onClick={handleEndBattleClick} className="mt-2">Continue Story</Button>
                     </div>
                 )}

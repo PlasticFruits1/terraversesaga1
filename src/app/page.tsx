@@ -17,10 +17,9 @@ import type { Creature } from '@/types';
 export default function Home() {
   const { gameState, saveGame, loadGame, resetGame, setGameState, unlockCreature, advanceStory } = useGameState();
 
-  const handleBattleWin = (unlockedCreatures: Creature[]) => {
-    // Note: unlockCreature now implicitly advances the story
+  const handleBattleWin = React.useCallback((unlockedCreatures: Creature[]) => {
     unlockCreature(unlockedCreatures);
-  };
+  },[unlockCreature]);
 
   if (!gameState) {
     return (
