@@ -12,7 +12,7 @@ export const initialCreatures: Creature[] = [
     defense: 65,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721232876935",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "mossy rock creature",
     abilities: [
       { name: "Vine Whip", type: "attack", power: 25, description: "Lashes out with a thorny vine.", energyCost: 15 },
@@ -30,7 +30,7 @@ export const initialCreatures: Creature[] = [
     defense: 40,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721233060601",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "electric fish",
     abilities: [
       { name: "Water Gun", type: "attack", power: 22, description: "Squirts a jet of water.", energyCost: 15 },
@@ -48,7 +48,7 @@ export const initialCreatures: Creature[] = [
     defense: 35,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721233158097",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "small wind spirit",
     abilities: [
       { name: "Peck", type: "attack", power: 28, description: "A quick, sharp peck.", energyCost: 15 },
@@ -69,7 +69,7 @@ const regularOpponents: Creature[] = [
     defense: 60,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721233306927",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "rock golem",
     abilities: [
       { name: "Rock Throw", type: "attack", power: 20, description: "Hurls a small rock.", energyCost: 15 },
@@ -87,7 +87,7 @@ const regularOpponents: Creature[] = [
     defense: 40,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721233379361",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "water wolf",
     abilities: [
         { name: "Bite", type: "attack", power: 22, description: "A sharp, quick bite.", energyCost: 15 },
@@ -105,7 +105,7 @@ const regularOpponents: Creature[] = [
     defense: 35,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721233446903",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "airborne manta",
     abilities: [
         { name: "Gust", type: "attack", power: 25, description: "A quick blast of wind.", energyCost: 15 },
@@ -123,7 +123,7 @@ const regularOpponents: Creature[] = [
     defense: 40,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721233519183",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "fire fox",
     abilities: [
         { name: "Scratch", type: "attack", power: 20, description: "A basic scratch attack.", energyCost: 10 },
@@ -141,7 +141,7 @@ const regularOpponents: Creature[] = [
     defense: 50,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721233580556",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "light spirit",
     abilities: [
         { name: "Flash", type: "debuff", description: "Lowers opponent's accuracy.", energyCost: 15 },
@@ -159,7 +159,7 @@ const regularOpponents: Creature[] = [
     defense: 48,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721233636320",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "shadow spider",
     abilities: [
         { name: "Poison Sting", type: "attack", power: 25, description: "A venomous jab.", energyCost: 20 },
@@ -180,7 +180,7 @@ const bossCreatures: Creature[] = [
     defense: 90,
     energy: 120,
     maxEnergy: 120,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721233777014",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "earth titan",
     abilities: [
         { name: "Tackle", type: "attack", power: 40, description: "A basic tackle.", energyCost: 15 },
@@ -198,7 +198,7 @@ const bossCreatures: Creature[] = [
     defense: 70,
     energy: 120,
     maxEnergy: 120,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721233912952",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "giant sea-dragon",
     abilities: [
         { name: "Tidal Wave", type: "attack", power: 45, description: "A huge wave crashes down.", energyCost: 25 },
@@ -216,7 +216,7 @@ const bossCreatures: Creature[] = [
     defense: 65,
     energy: 120,
     maxEnergy: 120,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721234032644",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "giant thunder-bird",
     abilities: [
         { name: "Drill Peck", type: "attack", power: 50, description: "A powerful, spinning beak attack.", energyCost: 25 },
@@ -234,7 +234,7 @@ const bossCreatures: Creature[] = [
     defense: 60,
     energy: 120,
     maxEnergy: 120,
-    imageUrl: "https://storage.googleapis.com/maker-studio-project-files-prod/ai-art/1721234182902",
+    imageUrl: "https://placehold.co/300x200",
     aiHint: "three-headed fire-hound",
     abilities: [
         { name: "Scorching Bite", type: "attack", power: 50, description: "A vicious, fiery bite.", energyCost: 25 },
