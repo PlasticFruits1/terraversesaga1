@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, type Dispatch, type SetStateAction } from 'react';
+import { useState, useEffect, useCallback, type Dispatch, type SetStateAction, useRef } from 'react';
 import type { GameState, Creature } from '@/types';
 import { initialCreatures, opponentCreatures } from '@/lib/creatures';
 import { useToast } from './use-toast';
@@ -30,6 +30,7 @@ const initialGameState: GameState = {
 export function useGameState() {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const { toast } = useToast();
+  const previousCreatureCount = useRef(0);
 
   useEffect(() => {
     try {
@@ -43,8 +44,10 @@ export function useGameState() {
         if (loadedState.storyProgress === undefined) {
           loadedState.storyProgress = 0;
         }
+        previousCreatureCount.current = loadedState.playerCreatures.length;
         setGameState(loadedState);
       } else {
+        previousCreatureCount.current = initialGameState.playerCreatures.length;
         setGameState(initialGameState);
       }
     } catch (error) {
@@ -52,6 +55,23 @@ export function useGameState() {
       setGameState(initialGameState);
     }
   }, []);
+
+  // This effect handles showing the toast when a creature is unlocked.
+  // It runs after the state has been updated, avoiding the "setState in render" error.
+  useEffect(() => {
+    if (gameState && gameState.playerCreatures.length > previousCreatureCount.current) {
+        const newCount = gameState.playerCreatures.length - previousCreatureCount.current;
+        const newCreatures = gameState.playerCreatures.slice(-newCount);
+        toast({
+            title: "Creature Unlocked!",
+            description: `${newCreatures.map(c => c.name).join(', ')} have been added to your roster.`
+        });
+    }
+    if (gameState) {
+      previousCreatureCount.current = gameState.playerCreatures.length;
+    }
+  }, [gameState?.playerCreatures, toast]);
+
 
   const saveGame = useCallback(() => {
     if (gameState) {
@@ -114,10 +134,6 @@ export function useGameState() {
         );
 
         if (newCreatures.length > 0) {
-            toast({
-                title: "Creature Unlocked!",
-                description: `${newCreatures.map(c => c.name).join(', ')} have been added to your roster.`
-            });
             return {
                 ...prevState,
                 playerCreatures: [...prevState.playerCreatures, ...initializeCreatures(newCreatures)]
@@ -125,7 +141,7 @@ export function useGameState() {
         }
         return prevState;
     });
-  }, [toast]);
+  }, []);
 
   const advanceStory = useCallback(() => {
     setGameState(prevState => {

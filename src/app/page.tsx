@@ -17,8 +17,9 @@ import type { Creature } from '@/types';
 export default function Home() {
   const { gameState, saveGame, loadGame, resetGame, setGameState, unlockCreature, advanceStory } = useGameState();
 
-  const handleBattleWin = React.useCallback((unlockedCreatures: Creature[]) => {
-    unlockCreature(unlockedCreatures);
+  const handleBattleWin = React.useCallback((wonOpponentCreatures: Creature[]) => {
+    // The unlockCreature hook now handles filtering, so we pass the whole list
+    unlockCreature(wonOpponentCreatures);
   },[unlockCreature]);
 
   if (!gameState) {
