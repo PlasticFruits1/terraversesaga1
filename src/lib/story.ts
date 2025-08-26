@@ -11,13 +11,13 @@ export const story: StoryChapter[] = [
     {
         character: "Mysterious Elder",
         dialogue: "Welcome, young one. The world of Terraverse is in turmoil. The elemental creatures, once our guardians, are enraged and causing chaos. I sense a unique power within you.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {
         character: "Mysterious Elder",
         dialogue: "You must embark on a journey to quell their rage. Your first task is to face a Stoneling whose rocky tantrums are shaking the very foundations of these plains. Show it a firm but gentle hand.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {
@@ -29,13 +29,13 @@ export const story: StoryChapter[] = [
     {
         character: "Mysterious Elder",
         dialogue: "Well done. You see? You didn't destroy it, you calmed it. The Stoneling now trusts you. It will join your cause. This is the way of the Beast Tamer.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {
         character: "Mysterious Elder",
         dialogue: "Your next challenge awaits by the coast. An Aqua-pup, whose sorrowful tides are flooding the shores, needs your help. Be wary of its speed and sharp bite.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {
@@ -47,7 +47,7 @@ export const story: StoryChapter[] = [
     {
         character: "Mysterious Elder",
         dialogue: "Excellent. You've calmed the waters. The path ahead leads to the high peaks, where a territorial Fetheray whips up unnatural storms. Its mastery of the winds is formidable.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {
@@ -59,7 +59,7 @@ export const story: StoryChapter[] = [
      {
         character: "Mysterious Elder",
         dialogue: "The skies clear, but now a scorching heat emanates from the nearby woods. An Ember-kit is running wild, setting small fires with its every step. You must cool its temper.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {
@@ -71,7 +71,7 @@ export const story: StoryChapter[] = [
     {
         character: "Mysterious Elder",
         dialogue: "You have a gift for this. The creatures are drawn to your strength and compassion. But not all creatures are so easily swayed. In the shimmering grove ahead, a Glimmerwisp is distorting the very light.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {
@@ -83,7 +83,7 @@ export const story: StoryChapter[] = [
     {
         character: "Mysterious Elder",
         dialogue: "The light bends to your will. Now, you must face the darkness. A Shade-crawler lurks in the nearby caves, its shadowy presence upsetting the natural balance.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {
@@ -95,7 +95,7 @@ export const story: StoryChapter[] = [
     {
         character: "Mysterious Elder",
         dialogue: "You've faced the basic elements. But now, you must prove your mastery. The great Terralord, king of the mountains, has awoken. Its power is immense. You must prove your worth.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {
@@ -107,7 +107,7 @@ export const story: StoryChapter[] = [
     {
         character: "Mysterious Elder",
         dialogue: "The earth now respects your strength. But the seas rage on. The Abyssal Leviathan has been stirred from its slumber. It is a true test of your control over water.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {
@@ -119,7 +119,7 @@ export const story: StoryChapter[] = [
     {
         character: "Mysterious Elder",
         dialogue: "The tides are calm once more. Now, look to the skies. The Thunder-roc, a being of pure storm, circles the highest peak. Its cries are thunder, its wings the hurricane.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {
@@ -131,7 +131,7 @@ export const story: StoryChapter[] = [
     {
         character: "Mysterious Elder",
         dialogue: "The storm has passed. Only one trial remains. The Inferno Cerberus, guardian of the volcanic core, is the embodiment of raw, untamed fire. You must face the heat.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {
@@ -143,7 +143,7 @@ export const story: StoryChapter[] = [
     {
         character: "Mysterious Elder",
         dialogue: "Incredible... you have truly proven yourself as a Master Beast Tamer. The land is safe, for now. Thank you.",
-        imageUrl: "https://placehold.co/400x225",
+        imageUrl: "https://i.imgur.com/G4Yxag0.png",
         isBattle: false,
     },
     {

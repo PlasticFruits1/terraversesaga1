@@ -12,7 +12,7 @@ export const initialCreatures: Creature[] = [
     defense: 65,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://imgur.com/wDNvtFI",
+    imageUrl: "https://i.imgur.com/wDNvtFI.png",
     aiHint: "mossy rock creature",
     abilities: [
       { name: "Vine Whip", type: "attack", power: 25, description: "Lashes out with a thorny vine.", energyCost: 15 },
@@ -30,7 +30,7 @@ export const initialCreatures: Creature[] = [
     defense: 40,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://imgur.com/5lsrqGC",
+    imageUrl: "https://i.imgur.com/5lsrqGC.png",
     aiHint: "electric fish",
     abilities: [
       { name: "Water Gun", type: "attack", power: 22, description: "Squirts a jet of water.", energyCost: 15 },
@@ -48,7 +48,7 @@ export const initialCreatures: Creature[] = [
     defense: 35,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://imgur.com/rnfuT9c",
+    imageUrl: "https://i.imgur.com/rnfuT9c.png",
     aiHint: "small wind spirit",
     abilities: [
       { name: "Peck", type: "attack", power: 28, description: "A quick, sharp peck.", energyCost: 15 },
@@ -69,7 +69,7 @@ const regularOpponents: Creature[] = [
     defense: 60,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://imgur.com/JhdPtwJ",
+    imageUrl: "https://i.imgur.com/JhdPtwJ.png",
     aiHint: "rock golem",
     abilities: [
       { name: "Rock Throw", type: "attack", power: 20, description: "Hurls a small rock.", energyCost: 15 },
@@ -87,7 +87,7 @@ const regularOpponents: Creature[] = [
     defense: 40,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://imgur.com/R2bg0hY",
+    imageUrl: "https://i.imgur.com/R2bg0hY.png",
     aiHint: "water wolf",
     abilities: [
         { name: "Bite", type: "attack", power: 22, description: "A sharp, quick bite.", energyCost: 15 },
@@ -105,7 +105,7 @@ const regularOpponents: Creature[] = [
     defense: 35,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://imgur.com/UNuMqjq",
+    imageUrl: "https://i.imgur.com/UNuMqjq.png",
     aiHint: "airborne manta",
     abilities: [
         { name: "Gust", type: "attack", power: 25, description: "A quick blast of wind.", energyCost: 15 },
@@ -123,7 +123,7 @@ const regularOpponents: Creature[] = [
     defense: 40,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://imgur.com/Cf0ftUv",
+    imageUrl: "https://i.imgur.com/Cf0ftUv.png",
     aiHint: "fire fox",
     abilities: [
         { name: "Scratch", type: "attack", power: 20, description: "A basic scratch attack.", energyCost: 10 },
@@ -141,7 +141,7 @@ const regularOpponents: Creature[] = [
     defense: 50,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://imgur.com/kvQo9oc",
+    imageUrl: "https://i.imgur.com/kvQo9oc.png",
     aiHint: "light spirit",
     abilities: [
         { name: "Flash", type: "debuff", description: "Lowers opponent's accuracy.", energyCost: 15 },
@@ -159,7 +159,7 @@ const regularOpponents: Creature[] = [
     defense: 48,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://imgur.com/MVcAOcy",
+    imageUrl: "https://i.imgur.com/MVcAOcy.png",
     aiHint: "shadow spider",
     abilities: [
         { name: "Poison Sting", type: "attack", power: 25, description: "A venomous jab.", energyCost: 20 },
@@ -180,7 +180,7 @@ const bossCreatures: Creature[] = [
     defense: 90,
     energy: 120,
     maxEnergy: 120,
-    imageUrl: "https://imgur.com/eDm0sH8",
+    imageUrl: "https://i.imgur.com/eDm0sH8.png",
     aiHint: "earth titan",
     abilities: [
         { name: "Tackle", type: "attack", power: 40, description: "A basic tackle.", energyCost: 15 },
@@ -198,7 +198,7 @@ const bossCreatures: Creature[] = [
     defense: 70,
     energy: 120,
     maxEnergy: 120,
-    imageUrl: "https://imgur.com/1hWZRTh",
+    imageUrl: "https://i.imgur.com/1hWZRTh.png",
     aiHint: "giant sea-dragon",
     abilities: [
         { name: "Tidal Wave", type: "attack", power: 45, description: "A huge wave crashes down.", energyCost: 25 },
@@ -216,7 +216,7 @@ const bossCreatures: Creature[] = [
     defense: 65,
     energy: 120,
     maxEnergy: 120,
-    imageUrl: "https://imgur.com/yPVjvwQ",
+    imageUrl: "https://i.imgur.com/yPVjvwQ.png",
     aiHint: "giant thunder-bird",
     abilities: [
         { name: "Drill Peck", type: "attack", power: 50, description: "A powerful, spinning beak attack.", energyCost: 25 },
@@ -234,7 +234,7 @@ const bossCreatures: Creature[] = [
     defense: 60,
     energy: 120,
     maxEnergy: 120,
-    imageUrl: "https://imgur.com/vTn5Xqb",
+    imageUrl: "https://i.imgur.com/vTn5Xqb.png",
     aiHint: "three-headed fire-hound",
     abilities: [
         { name: "Scorching Bite", type: "attack", power: 50, description: "A vicious, fiery bite.", energyCost: 25 },
