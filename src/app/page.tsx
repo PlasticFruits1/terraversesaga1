@@ -16,6 +16,7 @@ import type { Creature } from '@/types';
 
 export default function Home() {
   const { gameState, saveGame, loadGame, resetGame, setGameState, unlockCreature, advanceStory, setPlayerTeam } = useGameState();
+  const [activeTab, setActiveTab] = React.useState('battle');
 
   const handleBattleWin = React.useCallback((wonOpponentCreatures: Creature[]) => {
     // The unlockCreature hook now handles filtering, so we pass the whole list
@@ -64,7 +65,7 @@ export default function Home() {
       )}
 
       <main className="flex-grow container mx-auto p-4 md:p-6">
-        <Tabs defaultValue="battle" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-3 bg-card border rounded-lg">
             <TabsTrigger value="map">Map</TabsTrigger>
             <TabsTrigger value="roster">Roster</TabsTrigger>
@@ -89,6 +90,7 @@ export default function Home() {
               onBattleWin={handleBattleWin}
               onBattleEnd={advanceStory}
               allOpponentCreatures={gameState.opponentCreatures}
+              onSwitchToRoster={() => setActiveTab('roster')}
             />
           </TabsContent>
         </Tabs>

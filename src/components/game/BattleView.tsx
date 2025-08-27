@@ -37,13 +37,14 @@ interface BattleViewProps {
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   onBattleWin: (creatures: Creature[]) => void;
   onBattleEnd: () => void;
+  onSwitchToRoster: () => void;
 }
 
 const MAX_SWITCHES = 3;
 
 type BattleStatus = 'awaiting' | 'in_progress' | 'finished';
 
-export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatures, allOpponentCreatures, storyChapter, setGameState, onBattleWin, onBattleEnd }: BattleViewProps) {
+export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatures, allOpponentCreatures, storyChapter, setGameState, onBattleWin, onBattleEnd, onSwitchToRoster }: BattleViewProps) {
   const [battleStatus, setBattleStatus] = useState<BattleStatus>('awaiting');
   const [playerBattleTeam, setPlayerBattleTeam] = useState<Creature[]>([]);
   const [opponentTeam, setOpponentTeam] = useState<Creature[]>([]);
@@ -55,9 +56,6 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [battleOutcome, setBattleOutcome] = useState<'win' | 'loss' | null>(null);
   const [selectedAbility, setSelectedAbility] = useState<Ability | null>(null);
-  
-  const [selectedPlayerTeamForDialog, setSelectedPlayerTeamForDialog] = useState<Creature[]>(initialPlayerTeam);
-  const [showTeamSelectionDialog, setShowTeamSelectionDialog] = useState(false);
   
   const [showSwitchDialog, setShowSwitchDialog] = useState(false);
   const [remainingSwitches, setRemainingSwitches] = useState(MAX_SWITCHES);
@@ -73,9 +71,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
       setBattleLog([]);
       setBattleOutcome(null);
       setSelectedAbility(null);
-      setShowTeamSelectionDialog(false); // Ensure dialog is closed on reset
-      setSelectedPlayerTeamForDialog(initialPlayerTeam);
-  }, [initialPlayerTeam]);
+  }, []);
   
   useEffect(() => {
     if (storyChapter?.isBattle) {
@@ -92,10 +88,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
       return;
     }
     
-    // Determine which team to use: the one from the dialog or the initial one.
-    const teamToStart = showTeamSelectionDialog ? selectedPlayerTeamForDialog : initialPlayerTeam;
-
-    if (teamToStart.length === 0) {
+    if (initialPlayerTeam.length === 0) {
         toast({ variant: "destructive", title: "Team Required", description: "You must select at least one creature." });
         return;
     }
@@ -107,7 +100,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
         return;
     }
 
-    const livePlayerTeam = teamToStart.map(c => ({...c, hp: c.maxHp, energy: c.maxEnergy, defense: c.defense, isSleeping: false}));
+    const livePlayerTeam = initialPlayerTeam.map(c => ({...c, hp: c.maxHp, energy: c.maxEnergy, defense: c.defense, isSleeping: false}));
     setPlayerBattleTeam(livePlayerTeam);
     setActivePlayerCreature(livePlayerTeam[0]);
 
@@ -120,23 +113,9 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     setBattleOutcome(null);
     setRemainingSwitches(MAX_SWITCHES);
     setBattleStatus('in_progress');
-    setShowTeamSelectionDialog(false); // Close dialog after starting
 
-  }, [selectedPlayerTeamForDialog, storyChapter, allOpponentCreatures, toast, resetBattleState, initialPlayerTeam, showTeamSelectionDialog]);
+  }, [storyChapter, allOpponentCreatures, toast, resetBattleState, initialPlayerTeam]);
   
-  const handleSelectCreatureForDialog = (creature: Creature) => {
-    setSelectedPlayerTeamForDialog(prev => {
-      if (prev.some(c => c.id === creature.id)) {
-        return prev.filter(c => c.id !== creature.id);
-      }
-      if (prev.length < 3) {
-        return [...prev, creature];
-      }
-      toast({ title: "Team Full", description: "You can only select up to 3 creatures for your team.", duration: 3000 });
-      return prev;
-    });
-  };
-
   const addToLog = (message: string) => {
     setBattleLog(prevLog => [message, ...prevLog].slice(0, 50));
   };
@@ -389,12 +368,6 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     return isPlayerTurn && battleStatus === 'in_progress' && activePlayerCreature && activePlayerCreature.hp > 0 && !activePlayerCreature.isSleeping;
   }, [isPlayerTurn, battleStatus, activePlayerCreature]);
 
-  useEffect(() => {
-    // Sync the dialog's team selection with the global team state
-    setSelectedPlayerTeamForDialog(initialPlayerTeam);
-  }, [initialPlayerTeam]);
-
-  
   if (!storyChapter || !storyChapter.isBattle) {
     return (
       <Card>
@@ -418,18 +391,10 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
             <CardContent className="text-center">
                 <p className="text-xl mb-4">Your next opponent is <span className="font-bold text-primary">{opponent?.name || 'a mysterious creature'}</span>!</p>
                 <div className="flex justify-center gap-4">
-                    <Button onClick={() => {
-                        // Ensure we use the latest team from props for a fresh start
-                        setSelectedPlayerTeamForDialog(initialPlayerTeam);
-                        startBattle();
-                    }} size="lg">
+                    <Button onClick={startBattle} size="lg">
                         <Swords className="mr-2 h-5 w-5" /> Start Battle
                     </Button>
-                    <Button onClick={() => {
-                         // Pre-select the current team when opening the dialog
-                         setSelectedPlayerTeamForDialog(initialPlayerTeam);
-                         setShowTeamSelectionDialog(true)
-                    }} variant="outline" size="lg">
+                    <Button onClick={onSwitchToRoster} variant="outline" size="lg">
                        <Users className="mr-2 h-5 w-5" /> Change Team
                     </Button>
                 </div>
@@ -552,34 +517,6 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
                       setShowSwitchDialog(false)
                   }}>
                       Cancel
-                  </Button>
-              </DialogFooter>
-          </DialogContent>
-      </Dialog>
-
-      <Dialog open={showTeamSelectionDialog} onOpenChange={setShowTeamSelectionDialog}>
-           <DialogContent>
-              <DialogHeader>
-                  <DialogTitle>Change Your Team</DialogTitle>
-                  <DialogDescription>Select up to 3 creatures for the next battle.</DialogDescription>
-              </DialogHeader>
-              <ScrollArea className="max-h-[60vh] -mx-6 px-6">
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 py-4">
-                      {playerCreatures.map(c => (
-                          <CreatureCard 
-                              key={c.id} 
-                              creature={c} 
-                              isSelectable 
-                              isSelected={selectedPlayerTeamForDialog.some(sc => sc.id === c.id)}
-                              onSelect={() => handleSelectCreatureForDialog(c)}
-                          />
-                      ))}
-                  </div>
-              </ScrollArea>
-              <DialogFooter>
-                  <Button variant="outline" onClick={() => setShowTeamSelectionDialog(false)}>Cancel</Button>
-                  <Button onClick={startBattle} disabled={selectedPlayerTeamForDialog.length === 0 || selectedPlayerTeamForDialog.length > 3}>
-                      Confirm Team & Start Battle ({selectedPlayerTeamForDialog.length}/3)
                   </Button>
               </DialogFooter>
           </DialogContent>
