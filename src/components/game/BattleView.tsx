@@ -2,11 +2,12 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import Image from 'next/image';
 import type { Creature, GameState, Ability } from '@/types';
 import type { StoryChapter } from '@/lib/story';
 import CreatureCard from './CreatureCard';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Swords, Repeat, Users } from 'lucide-react';
 import {
@@ -419,9 +420,24 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
             <CardHeader>
                 <CardTitle className="font-headline text-2xl">Battle Ahead!</CardTitle>
             </CardHeader>
-            <CardContent className="text-center">
-                <p className="text-xl mb-4">Your next opponent is <span className="font-bold text-primary">{opponent?.name || 'a mysterious creature'}</span>!</p>
-                <div className="flex justify-center gap-4">
+            <CardContent className="text-center space-y-4">
+                {opponent && (
+                    <div className='flex flex-col items-center gap-4'>
+                        <div className="relative aspect-video w-full max-w-md rounded-lg overflow-hidden border-2 border-primary/50 shadow-lg">
+                             <Image
+                                src={opponent.imageUrl}
+                                alt={`Image of ${opponent.name}`}
+                                layout="fill"
+                                objectFit="cover"
+                                data-ai-hint={opponent.aiHint}
+                            />
+                        </div>
+                        <h3 className="text-2xl font-bold text-primary">{opponent.name}</h3>
+                        <p className="text-muted-foreground max-w-prose">{opponent.lore || 'A mysterious creature of unknown origin.'}</p>
+                    </div>
+                )}
+                
+                <div className="flex justify-center gap-4 pt-4">
                     <Button onClick={startBattle} size="lg">
                         <Swords className="mr-2 h-5 w-5" /> Start Battle
                     </Button>

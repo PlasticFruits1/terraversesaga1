@@ -14,6 +14,7 @@ export const initialCreatures: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/wDNvtFI.png",
     aiHint: "mossy rock creature",
+    lore: "Born from ancient, moss-covered stones, Mosslings are shy creatures that prefer the quiet solitude of deep forests. They can remain motionless for days, appearing as simple rocks to unsuspecting travelers. Their tough, bark-like skin provides excellent natural defense.",
     abilities: [
       { name: "Vine Whip", type: "attack", power: 25, description: "Lashes out with a thorny vine.", energyCost: 15 },
       { name: "Harden", type: "defense", defenseBoost: 15, description: "Tenses its body to raise defense.", energyCost: 20 },
@@ -32,6 +33,7 @@ export const initialCreatures: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/5lsrqGC.png",
     aiHint: "electric fish",
+    lore: "This energetic fish generates a weak electrical field that causes its fins to sparkle with light. They travel in schools, creating dazzling underwater light shows during migrations. While not powerful individually, a large group can generate a significant current.",
     abilities: [
       { name: "Water Gun", type: "attack", power: 22, description: "Squirts a jet of water.", energyCost: 15 },
       { name: "Charge", type: "buff", description: "Gathers electricity to boost the next attack.", energyCost: 20 },
@@ -50,6 +52,7 @@ export const initialCreatures: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/rnfuT9c.png",
     aiHint: "small wind spirit",
+    lore: "Aero-lings are playful spirits of the wind, often seen chasing leaves on breezy autumn days. They are incredibly light, with hollow bones and bodies composed partially of condensed air. Despite their small size, they can be fiercely territorial, defending their nests with sharp pecks and gusts of wind.",
     abilities: [
       { name: "Peck", type: "attack", power: 28, description: "A quick, sharp peck.", energyCost: 15 },
       { name: "Screech", type: "debuff", description: "A loud screech that lowers opponent's defense.", energyCost: 20 },
@@ -71,6 +74,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/JhdPtwJ.png",
     aiHint: "rock golem",
+    lore: "Stonelings are often mistaken for inanimate boulders until they rise from the earth to defend their territory. Their bodies are composed of granite and sediment, making them incredibly sturdy but slow-moving. They communicate through low, rumbling sounds that vibrate through the ground.",
     abilities: [
       { name: "Rock Throw", type: "attack", power: 20, description: "Hurls a small rock.", energyCost: 15 },
       { name: "Stone Skin", type: "defense", defenseBoost: 10, description: "Hardens skin, increasing defense.", energyCost: 20 },
@@ -89,6 +93,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/R2bg0hY.png",
     aiHint: "water wolf",
+    lore: "These playful creatures are the spirits of mountain streams, with fur that mimics the flow of water. Aqua-pups are known for their loyalty and will fiercely protect the riverbeds they call home. They hunt in small packs, using coordinated underwater maneuvers to confuse their prey.",
     abilities: [
         { name: "Bite", type: "attack", power: 22, description: "A sharp, quick bite.", energyCost: 15 },
         { name: "Aqua Jet", type: "attack", power: 18, description: "Slam into the foe with high speed.", energyCost: 20 },
@@ -107,6 +112,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/UNuMqjq.png",
     aiHint: "airborne manta",
+    lore: "Fetherays gracefully ride the thermal updrafts of canyons and mountains, rarely touching the ground. Their bodies are light and flexible, allowing them to perform complex aerial acrobatics. Sailors consider a Fetheray sighting to be a good omen, signaling fair winds and clear skies.",
     abilities: [
         { name: "Gust", type: "attack", power: 25, description: "A quick blast of wind.", energyCost: 15 },
         { name: "Tailwind", type: "buff", description: "Raises speed for a few turns.", energyCost: 20 },
@@ -125,6 +131,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/Cf0ftUv.png",
     aiHint: "fire fox",
+    lore: "The fur of an Ember-kit smolders with a gentle warmth, and its tail burns with a flame that reflects its health and mood. They are mischievous creatures, often found playfully chasing fireflies at dusk. An Ember-kit's flame can flare up dramatically when it is angered or threatened.",
     abilities: [
         { name: "Scratch", type: "attack", power: 20, description: "A basic scratch attack.", energyCost: 10 },
         { name: "Flame Wheel", type: "attack", power: 35, description: "A fiery spinning tackle.", energyCost: 25 },
@@ -143,6 +150,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/kvQo9oc.png",
     aiHint: "light spirit",
+    lore: "These benevolent spirits are living embodiments of soft light, often found in sacred groves and ancient ruins. A Glimmerwisp's light is said to have healing properties and can soothe troubled minds. They are drawn to acts of kindness and may guide lost travelers to safety.",
     abilities: [
         { name: "Flash", type: "debuff", description: "Lowers opponent's accuracy.", energyCost: 15 },
         { name: "Light Screen", type: "defense", defenseBoost: 25, description: "A screen of light that boosts defense.", energyCost: 30 },
@@ -161,6 +169,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/MVcAOcy.png",
     aiHint: "shadow spider",
+    lore: "Shade-crawlers thrive in the darkest caves and deepest shadows, their bodies absorbing the surrounding light. They spin webs of pure darkness that are nearly impossible to see, trapping unsuspecting prey. Despite their fearsome appearance, they are ambush predators that prefer to hide.",
     abilities: [
         { name: "Poison Sting", type: "attack", power: 25, description: "A venomous jab.", energyCost: 20 },
         { name: "Shadow Sneak", type: "attack", power: 30, description: "Attacks from the shadows.", energyCost: 25 },
@@ -179,6 +188,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/JDrtGtD.jpg",
     aiHint: "glowing stone turtle",
+    lore: "The shell of a Sunstone Turtle is embedded with luminous crystals that absorb and store sunlight. They spend their days basking, and at night their shells emit a warm, gentle glow. Ancient legends claim their shells can focus light into powerful defensive barriers.",
     abilities: [
         { name: "Shell Smash", type: "attack", power: 30, description: "A powerful body slam.", energyCost: 20 },
         { name: "Solar Beam", type: "attack", power: 45, description: "A concentrated blast of light.", energyCost: 35 },
@@ -197,6 +207,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/AZa9NFC.jpg",
     aiHint: "shadow wolf beast",
+    lore: "A hunter of the twilight hours, the Gloomfang stalks the edges of dark forests. Its fur is the color of a moonless night, allowing it to blend seamlessly into the shadows. The eerie howl of a Gloomfang is said to drain the courage from even the bravest warriors.",
     abilities: [
         { name: "Shadow Claw", type: "attack", power: 35, description: "Slashes with claws of darkness.", energyCost: 20 },
         { name: "Howl", type: "buff", description: "A chilling howl that raises attack.", energyCost: 15 },
@@ -215,6 +226,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/Tu19ubc.jpg",
     aiHint: "sentient vine monster",
+    lore: "A creature born from the dense, magical undergrowth of ancient forests. The Vine-Crawler can command the plants around it, using them to entangle foes and absorb nutrients directly from the soil. Its central body is a hardened knot of wood, protecting a glowing, life-giving core.",
     abilities: [
         { name: "Leech Seed", type: "heal", power: 15, description: "Saps opponent's HP each turn.", energyCost: 25 },
         { name: "Razor Leaf", type: "attack", power: 30, description: "Slices with sharp-edged leaves.", energyCost: 20 },
@@ -233,6 +245,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/hLE6886.jpg",
     aiHint: "geyser fish",
+    lore: "Geyser-Fins make their homes in volcanically active waters, absorbing geothermal energy. They can store immense pressure within their bodies, releasing it in powerful, targeted blasts of boiling water. The temperature of the water they shoot can be hot enough to melt rock.",
     abilities: [
         { name: "Scald", type: "attack", power: 38, description: "Shoots boiling water.", energyCost: 25 },
         { name: "Aqua Ring", type: "heal", power: 20, description: "Restores a little HP each turn.", energyCost: 30 },
@@ -251,6 +264,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/CkZd9xC.jpg",
     aiHint: "glowing wind spirit",
+    lore: "A more potent and focused version of an Aero-ling, the Zephyr-Wisp is a being of pure, rushing wind. It moves with incredible speed, appearing as little more than a blur to the naked eye. They are said to be the messengers of the great wind titans, carrying whispers on the breeze.",
     abilities: [
         { name: "Twister", type: "attack", power: 35, description: "Whips up a vicious twister.", energyCost: 25 },
         { name: "Agility", type: "buff", description: "Greatly raises its speed.", energyCost: 15 },
@@ -269,6 +283,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/t7e7Gqq.jpg",
     aiHint: "magma puppy",
+    lore: "These sturdy creatures have bodies of cooling magma, with a fiery core that never extinguishes. Magma-Pups are surprisingly playful, often chasing rolling boulders down volcanic slopes. Their bark sounds like the crackling of a powerful fire, and their bite can melt steel.",
     abilities: [
         { name: "Lava Plume", type: "attack", power: 40, description: "A blast of lava.", energyCost: 30 },
         { name: "Rock Polish", type: "buff", description: "Boosts its speed.", energyCost: 15 },
@@ -287,6 +302,7 @@ const regularOpponents: Creature[] = [
     maxEnergy: 100,
     imageUrl: "https://i.imgur.com/gAFahTr.jpg",
     aiHint: "divine unicorn beast",
+    lore: "A sacred beast said to be born from a fallen star. The Celestial-Kirin is a bringer of peace and prosperity, and its presence can cause barren lands to bloom with life. Its horn glows with a holy light that can mend wounds and purify corruption.",
     abilities: [
         { name: "Holy Light", type: "heal", power: 30, description: "Bathes in holy light to heal.", energyCost: 30 },
         { name: "Horn Drill", type: "attack", power: 45, description: "A powerful, focused horn attack.", energyCost: 30 },
@@ -308,6 +324,7 @@ const bossCreatures: Creature[] = [
     maxEnergy: 120,
     imageUrl: "https://i.imgur.com/eDm0sH8.png",
     aiHint: "earth titan",
+    lore: "The Terralord is an ancient guardian of the mountains, awoken from a thousand-year slumber. Its body is formed from the very bedrock of the world, making its defense nearly impenetrable. Legends say that when the Terralord moves, entire mountain ranges are born.",
     abilities: [
         { name: "Tackle", type: "attack", power: 40, description: "A basic tackle.", energyCost: 15 },
         { name: "Fortify", type: "defense", defenseBoost: 25, description: "Greatly raises defense.", energyCost: 25 },
@@ -326,6 +343,7 @@ const bossCreatures: Creature[] = [
     maxEnergy: 120,
     imageUrl: "https://i.imgur.com/1hWZRTh.png",
     aiHint: "giant sea-dragon",
+    lore: "This colossal beast slumbers in the deepest trenches of the ocean, its movements causing the tides to shift. The Abyssal Leviathan's scales shimmer with the colors of the deep, and its roar is the sound of a tidal wave. It is the undisputed ruler of the seas.",
     abilities: [
         { name: "Tidal Wave", type: "attack", power: 45, description: "A huge wave crashes down.", energyCost: 25 },
         { name: "Regenerate", type: "heal", power: 30, description: "Recovers a good amount of HP.", energyCost: 30 },
@@ -344,6 +362,7 @@ const bossCreatures: Creature[] = [
     maxEnergy: 120,
     imageUrl: "https://i.imgur.com/yPVjvwQ.png",
     aiHint: "giant thunder-bird",
+    lore: "The Thunder-roc is a legendary bird whose wingspan can blot out the sun, creating unnatural storms. It nests on the highest, most inaccessible peaks, and its feathers crackle with static electricity. It is said that a single flap of its wings can create a hurricane.",
     abilities: [
         { name: "Drill Peck", type: "attack", power: 50, description: "A powerful, spinning beak attack.", energyCost: 25 },
         { name: "Thunder", type: "attack", power: 65, description: "A massive bolt of lightning.", energyCost: 40 },
@@ -362,6 +381,7 @@ const bossCreatures: Creature[] = [
     maxEnergy: 120,
     imageUrl: "https://i.imgur.com/vTn5Xqb.png",
     aiHint: "three-headed fire-hound",
+    lore: "This monstrous three-headed hound guards the gates to the planet's molten core. Each of its heads can breathe a different type of flame, from scorching heat to soul-chilling black fire. The Inferno Cerberus is a relentless attacker that will stop at nothing to incinerate its foes.",
     abilities: [
         { name: "Scorching Bite", type: "attack", power: 50, description: "A vicious, fiery bite.", energyCost: 25 },
         { name: "Howl", type: "buff", description: "Raises its own attack stat.", energyCost: 15 },
@@ -380,6 +400,7 @@ const bossCreatures: Creature[] = [
     maxEnergy: 150,
     imageUrl: "https://i.imgur.com/98DLelJ.jpg",
     aiHint: "clockwork dragon",
+    lore: "A being that exists outside the normal flow of time, the Chrono-Wing is a paradox of metal and light. Its clockwork body moves with impossible precision, and its wings beat to a rhythm only it can hear. It is said to be the guardian of history, capable of rewinding time to heal its wounds or replaying attacks.",
     abilities: [
         { name: "Time Rift", type: "attack", power: 60, description: "Tears a hole in time to strike.", energyCost: 35 },
         { name: "Stasis Field", type: "debuff", description: "May cause the opponent to lose a turn.", energyCost: 40 },
@@ -398,6 +419,7 @@ const bossCreatures: Creature[] = [
     maxEnergy: 140,
     imageUrl: "https://i.imgur.com/yxRhD2k.jpg",
     aiHint: "eldritch void monster",
+    lore: "The Void-Reaver is an alien entity that slipped through a crack between dimensions. It is a being of pure hunger, consuming all light and matter it comes into contact with. Its amorphous body shifts and writhes, making it a terrifying and unpredictable opponent.",
     abilities: [
         { name: "Abyssal Grasp", type: "attack", power: 65, description: "Tendrils of shadow lash out.", energyCost: 35 },
         { name: "Consume Light", type: "heal", power: 40, description: "Drains life from the opponent.", energyCost: 40 },
@@ -416,6 +438,7 @@ const bossCreatures: Creature[] = [
     maxEnergy: 200,
     imageUrl: "https://i.imgur.com/W1meE1j.jpg",
     aiHint: "elemental crystal titan",
+    lore: "The final guardian of Terraverse, the Nexus-Guardian is the living embodiment of all elements in harmony. It was created at the beginning of time to maintain the world's balance. Its crystal body pulses with unimaginable power, capable of unleashing attacks of every elemental type.",
     abilities: [
         { name: "Prismatic Wave", type: "attack", power: 70, description: "Unleashes a wave of mixed elemental energy.", energyCost: 40 },
         { name: "Elemental Shift", type: "defense", defenseBoost: 40, description: "Changes its resistance by shifting elements.", energyCost: 30 },

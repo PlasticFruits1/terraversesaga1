@@ -26,6 +26,7 @@ export interface Creature {
   aiHint: string;
   abilities: Ability[];
   isSleeping?: boolean;
+  lore?: string;
 }
 
 export interface GameState {
