@@ -167,6 +167,42 @@ const regularOpponents: Creature[] = [
         { name: "Fade", type: "defense", defenseBoost: 18, description: "Fades into the darkness, raising defense.", energyCost: 20 }
     ]
   },
+  {
+    id: 27,
+    name: "Sunstone Turtle",
+    type: "Lux",
+    hp: 70,
+    maxHp: 70,
+    attack: 35,
+    defense: 80,
+    energy: 100,
+    maxEnergy: 100,
+    imageUrl: "https://i.imgur.com/D4s2yPz.png",
+    aiHint: "glowing stone turtle",
+    abilities: [
+        { name: "Shell Smash", type: "attack", power: 30, description: "A powerful body slam.", energyCost: 20 },
+        { name: "Solar Beam", type: "attack", power: 45, description: "A concentrated blast of light.", energyCost: 35 },
+        { name: "Iron Defense", type: "defense", defenseBoost: 20, description: "Hardens its shell to the max.", energyCost: 25 }
+    ]
+  },
+  {
+    id: 28,
+    name: "Gloomfang",
+    type: "Umbra",
+    hp: 55,
+    maxHp: 55,
+    attack: 65,
+    defense: 45,
+    energy: 100,
+    maxEnergy: 100,
+    imageUrl: "https://i.imgur.com/S9sJwvE.png",
+    aiHint: "shadow wolf beast",
+    abilities: [
+        { name: "Shadow Claw", type: "attack", power: 35, description: "Slashes with claws of darkness.", energyCost: 20 },
+        { name: "Howl", type: "buff", description: "A chilling howl that raises attack.", energyCost: 15 },
+        { name: "Bite", type: "attack", power: 25, description: "A standard, vicious bite.", energyCost: 15 }
+    ]
+  }
 ];
 
 const bossCreatures: Creature[] = [
@@ -242,6 +278,24 @@ const bossCreatures: Creature[] = [
         { name: "Hellfire", type: "attack", power: 70, description: "Engulfs the foe in black flames.", energyCost: 45 }
     ]
   },
+  {
+    id: 105,
+    name: "Chrono-Wing",
+    type: "Lux",
+    hp: 200,
+    maxHp: 200,
+    attack: 85,
+    defense: 85,
+    energy: 150,
+    maxEnergy: 150,
+    imageUrl: "https://i.imgur.com/s64bYkI.png",
+    aiHint: "clockwork dragon",
+    abilities: [
+        { name: "Time Rift", type: "attack", power: 60, description: "Tears a hole in time to strike.", energyCost: 35 },
+        { name: "Stasis Field", type: "debuff", description: "May cause the opponent to lose a turn.", energyCost: 40 },
+        { name: "Temporal Heal", type: "heal", power: 50, description: "Reverts its own wounds by rewinding time.", energyCost: 45 }
+    ]
+  }
 ];
 
 export const opponentCreatures: Creature[] = [
