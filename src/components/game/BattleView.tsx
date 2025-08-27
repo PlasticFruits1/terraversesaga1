@@ -419,12 +419,14 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
                 <p className="text-xl mb-4">Your next opponent is <span className="font-bold text-primary">{opponent?.name || 'a mysterious creature'}</span>!</p>
                 <div className="flex justify-center gap-4">
                     <Button onClick={() => {
+                        // Ensure we use the latest team from props for a fresh start
                         setSelectedPlayerTeamForDialog(initialPlayerTeam);
                         startBattle();
                     }} size="lg">
                         <Swords className="mr-2 h-5 w-5" /> Start Battle
                     </Button>
                     <Button onClick={() => {
+                         // Pre-select the current team when opening the dialog
                          setSelectedPlayerTeamForDialog(initialPlayerTeam);
                          setShowTeamSelectionDialog(true)
                     }} variant="outline" size="lg">
@@ -585,3 +587,5 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     </>
   );
 }
+
+    
