@@ -71,7 +71,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     setFloatingTexts(prev => [...prev, newText]);
     setTimeout(() => {
       setFloatingTexts(current => current.filter(t => t.id !== newText.id));
-    }, 1500); // Remove after animation finishes
+    }, 2500); // Remove after animation finishes
   }, []);
   
   const resetBattleState = useCallback(() => {
@@ -464,13 +464,17 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     resetBattleState();
   }
   
-  const getFloatingTextClass = (type: FloatingText['type']) => {
-    switch (type) {
-      case 'damage': return 'text-red-500';
-      case 'heal': return 'text-green-400';
+  const getFloatingTextClass = (text: FloatingText) => {
+    let classes = 'text-shadow-lg ';
+    if(text.text === 'Fainted!') {
+        classes += 'font-bold ';
+    }
+    switch (text.type) {
+      case 'damage': return classes + 'text-red-500';
+      case 'heal': return classes + 'text-green-400';
       case 'info':
       default:
-        return 'text-white';
+        return classes + 'text-white';
     }
   }
 
@@ -497,7 +501,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
               <div className="space-y-4 md:col-span-5 relative">
                   <h3 className="text-xl font-headline text-center text-green-400">Your Team</h3>
                    {floatingTexts.filter(t => t.team === 'player').map(t => (
-                      <div key={t.id} className={`animate-float-up absolute top-1/2 left-1/2 -translate-x-1/2 z-10 text-2xl font-bold stroke-black text-shadow-lg ${getFloatingTextClass(t.type)}`}>
+                      <div key={t.id} className={`animate-float-up absolute top-1/2 left-1/2 -translate-x-1/2 z-10 text-2xl font-bold ${getFloatingTextClass(t)}`}>
                           {t.text}
                       </div>
                   ))}
@@ -535,7 +539,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
               <div className="space-y-4 md:col-span-5 relative">
                   <h3 className="text-xl font-headline text-center text-red-400">Opponent</h3>
                    {floatingTexts.filter(t => t.team === 'opponent').map(t => (
-                      <div key={t.id} className={`animate-float-up absolute top-1/2 left-1/2 -translate-x-1/2 z-10 text-2xl font-bold stroke-black text-shadow-lg ${getFloatingTextClass(t.type)}`}>
+                      <div key={t.id} className={`animate-float-up absolute top-1/2 left-1/2 -translate-x-1/2 z-10 text-2xl font-bold ${getFloatingTextClass(t)}`}>
                           {t.text}
                       </div>
                   ))}

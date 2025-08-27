@@ -59,7 +59,7 @@
 
 @layer utilities {
   .animate-float-up {
-    animation: float-up 1.5s ease-out forwards;
+    animation: float-up 2.5s ease-out forwards;
   }
 
   @keyframes float-up {
@@ -68,8 +68,15 @@
       opacity: 1;
     }
     100% {
-      transform: translateY(-60px);
+      transform: translateY(-50px);
       opacity: 0;
     }
+  }
+
+  .text-shadow {
+    text-shadow: 1px 1px 2px black, 0 0 1em black, 0 0 0.2em black;
+  }
+  .text-shadow-lg {
+     text-shadow: 2px 2px 4px black, 0 0 1.5em black, 0 0 0.4em black;
   }
 }
