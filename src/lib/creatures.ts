@@ -177,7 +177,7 @@ const regularOpponents: Creature[] = [
     defense: 80,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    imageUrl: "https://i.imgur.com/JDrtGtD.jpg",
     aiHint: "glowing stone turtle",
     abilities: [
         { name: "Shell Smash", type: "attack", power: 30, description: "A powerful body slam.", energyCost: 20 },
@@ -195,7 +195,7 @@ const regularOpponents: Creature[] = [
     defense: 45,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    imageUrl: "https://i.imgur.com/AZa9NFC.jpg",
     aiHint: "shadow wolf beast",
     abilities: [
         { name: "Shadow Claw", type: "attack", power: 35, description: "Slashes with claws of darkness.", energyCost: 20 },
@@ -213,7 +213,7 @@ const regularOpponents: Creature[] = [
     defense: 55,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    imageUrl: "https://i.imgur.com/Tu19ubc.jpg",
     aiHint: "sentient vine monster",
     abilities: [
         { name: "Leech Seed", type: "heal", power: 15, description: "Saps opponent's HP each turn.", energyCost: 25 },
@@ -231,7 +231,7 @@ const regularOpponents: Creature[] = [
     defense: 45,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    imageUrl: "https://i.imgur.com/hLE6886.jpg",
     aiHint: "geyser fish",
     abilities: [
         { name: "Scald", type: "attack", power: 38, description: "Shoots boiling water.", energyCost: 25 },
@@ -249,7 +249,7 @@ const regularOpponents: Creature[] = [
     defense: 40,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    imageUrl: "https://i.imgur.com/CkZd9xC.jpg",
     aiHint: "glowing wind spirit",
     abilities: [
         { name: "Twister", type: "attack", power: 35, description: "Whips up a vicious twister.", energyCost: 25 },
@@ -267,7 +267,7 @@ const regularOpponents: Creature[] = [
     defense: 60,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    imageUrl: "https://i.imgur.com/t7e7Gqq.jpg",
     aiHint: "magma puppy",
     abilities: [
         { name: "Lava Plume", type: "attack", power: 40, description: "A blast of lava.", energyCost: 30 },
@@ -285,7 +285,7 @@ const regularOpponents: Creature[] = [
     defense: 65,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    imageUrl: "https://i.imgur.com/gAFahTr.jpg",
     aiHint: "divine unicorn beast",
     abilities: [
         { name: "Holy Light", type: "heal", power: 30, description: "Bathes in holy light to heal.", energyCost: 30 },
@@ -378,7 +378,7 @@ const bossCreatures: Creature[] = [
     defense: 85,
     energy: 150,
     maxEnergy: 150,
-    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    imageUrl: "https://i.imgur.com/98DLelJ.jpg",
     aiHint: "clockwork dragon",
     abilities: [
         { name: "Time Rift", type: "attack", power: 60, description: "Tears a hole in time to strike.", energyCost: 35 },
@@ -396,7 +396,7 @@ const bossCreatures: Creature[] = [
     defense: 75,
     energy: 140,
     maxEnergy: 140,
-    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    imageUrl: "https://i.imgur.com/yxRhD2k.jpg",
     aiHint: "eldritch void monster",
     abilities: [
         { name: "Abyssal Grasp", type: "attack", power: 65, description: "Tendrils of shadow lash out.", energyCost: 35 },
@@ -414,7 +414,7 @@ const bossCreatures: Creature[] = [
     defense: 100,
     energy: 200,
     maxEnergy: 200,
-    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    imageUrl: "https://i.imgur.com/W1meE1j.jpg",
     aiHint: "elemental crystal titan",
     abilities: [
         { name: "Prismatic Wave", type: "attack", power: 70, description: "Unleashes a wave of mixed elemental energy.", energyCost: 40 },
