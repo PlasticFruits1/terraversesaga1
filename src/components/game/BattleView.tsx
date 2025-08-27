@@ -60,6 +60,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
   const [selectedAbility, setSelectedAbility] = useState<Ability | null>(null);
   
   const [showSwitchDialog, setShowSwitchDialog] = useState(false);
+  const [showVictoryDialog, setShowVictoryDialog] = useState(false);
   const [remainingSwitches, setRemainingSwitches] = useState(MAX_SWITCHES);
 
   const [floatingTexts, setFloatingTexts] = useState<FloatingText[]>([]);
@@ -84,6 +85,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
       setBattleOutcome(null);
       setSelectedAbility(null);
       setFloatingTexts([]);
+      setShowVictoryDialog(false);
   }, []);
   
   useEffect(() => {
@@ -253,6 +255,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
    useEffect(() => {
     if (battleOutcome === 'win') {
       onBattleWin(opponentTeam);
+      setShowVictoryDialog(true);
     }
   }, [battleOutcome, opponentTeam, onBattleWin]);
 
@@ -528,9 +531,9 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
                       <h3 className="font-headline text-lg mb-2">Battle Log</h3>
                       {battleLog.map((log, index) => <p key={index} className="text-sm mb-1">{log}</p>)}
                   </ScrollArea>
-                  {battleStatus === 'finished' && (
+                   {battleOutcome === 'loss' && (
                       <div className="text-center p-4">
-                          <p className="font-bold text-2xl mb-2">{battleOutcome === 'win' ? 'VICTORY' : 'DEFEAT'}</p>
+                          <p className="font-bold text-2xl mb-2">DEFEAT</p>
                           <Button onClick={handleEndBattleClick} className="mt-2">Continue Story</Button>
                       </div>
                   )}
@@ -592,8 +595,20 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
               </DialogFooter>
           </DialogContent>
       </Dialog>
+      
+      <Dialog open={showVictoryDialog} onOpenChange={setShowVictoryDialog}>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle className="text-3xl font-headline text-center text-primary">Victory!</DialogTitle>
+                <DialogDescription className="text-center">
+                    You have defeated the opponent and proven your strength.
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+                <Button onClick={handleEndBattleClick} className="w-full">Continue Story</Button>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
-
-    
