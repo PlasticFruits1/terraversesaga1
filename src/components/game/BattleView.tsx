@@ -90,7 +90,11 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
       toast({ variant: "destructive", title: "No Battle", description: "There is no battle to start at this time." });
       return;
     }
-    if (selectedPlayerTeamForDialog.length === 0) {
+    
+    // Determine which team to use: the one from the dialog or the initial one.
+    const teamToStart = showTeamSelectionDialog ? selectedPlayerTeamForDialog : initialPlayerTeam;
+
+    if (teamToStart.length === 0) {
         toast({ variant: "destructive", title: "Team Required", description: "You must select at least one creature." });
         return;
     }
@@ -102,7 +106,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
         return;
     }
 
-    const livePlayerTeam = selectedPlayerTeamForDialog.map(c => ({...c, hp: c.maxHp, energy: c.maxEnergy, defense: c.defense, isSleeping: false}));
+    const livePlayerTeam = teamToStart.map(c => ({...c, hp: c.maxHp, energy: c.maxEnergy, defense: c.defense, isSleeping: false}));
     setPlayerBattleTeam(livePlayerTeam);
     setActivePlayerCreature(livePlayerTeam[0]);
 
@@ -117,7 +121,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     setBattleStatus('in_progress');
     setShowTeamSelectionDialog(false);
 
-  }, [selectedPlayerTeamForDialog, storyChapter, allOpponentCreatures, toast, resetBattleState]);
+  }, [selectedPlayerTeamForDialog, storyChapter, allOpponentCreatures, toast, resetBattleState, initialPlayerTeam, showTeamSelectionDialog]);
   
   const handleSelectCreatureForDialog = (creature: Creature) => {
     setSelectedPlayerTeamForDialog(prev => {
@@ -577,3 +581,5 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     </Card>
   );
 }
+
+    
