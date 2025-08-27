@@ -43,6 +43,7 @@ interface BattleViewProps {
 const MAX_SWITCHES = 3;
 
 type BattleStatus = 'awaiting' | 'in_progress' | 'finished';
+type FloatingText = { id: number; text: string; team: 'player' | 'opponent'; type: 'damage' | 'heal' | 'info' };
 
 export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatures, allOpponentCreatures, storyChapter, setGameState, onBattleWin, onBattleEnd, onSwitchToRoster }: BattleViewProps) {
   const [battleStatus, setBattleStatus] = useState<BattleStatus>('awaiting');
@@ -60,7 +61,17 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
   const [showSwitchDialog, setShowSwitchDialog] = useState(false);
   const [remainingSwitches, setRemainingSwitches] = useState(MAX_SWITCHES);
 
+  const [floatingTexts, setFloatingTexts] = useState<FloatingText[]>([]);
+
   const { toast } = useToast();
+  
+  const addFloatingText = useCallback((text: string, team: 'player' | 'opponent', type: FloatingText['type'] = 'info') => {
+    const newText: FloatingText = { id: Date.now() + Math.random(), text, team, type };
+    setFloatingTexts(prev => [...prev, newText]);
+    setTimeout(() => {
+      setFloatingTexts(current => current.filter(t => t.id !== newText.id));
+    }, 1500); // Remove after animation finishes
+  }, []);
   
   const resetBattleState = useCallback(() => {
       setBattleStatus('awaiting');
@@ -71,6 +82,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
       setBattleLog([]);
       setBattleOutcome(null);
       setSelectedAbility(null);
+      setFloatingTexts([]);
   }, []);
   
   useEffect(() => {
@@ -90,6 +102,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     
     if (initialPlayerTeam.length === 0) {
         toast({ variant: "destructive", title: "Team Required", description: "You must select at least one creature." });
+        onSwitchToRoster();
         return;
     }
     
@@ -114,7 +127,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     setRemainingSwitches(MAX_SWITCHES);
     setBattleStatus('in_progress');
 
-  }, [storyChapter, allOpponentCreatures, toast, resetBattleState, initialPlayerTeam]);
+  }, [storyChapter, allOpponentCreatures, toast, resetBattleState, initialPlayerTeam, onSwitchToRoster]);
   
   const addToLog = (message: string) => {
     setBattleLog(prevLog => [message, ...prevLog].slice(0, 50));
@@ -167,12 +180,14 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
             
             if (defenseDamage > 0) {
               updatedDefender.defense -= defenseDamage;
+              addFloatingText(`-${defenseDamage} Def`, targetTeam, 'damage');
               addToLog(`${updatedDefender.name}'s defense absorbed ${defenseDamage} damage! Remaining defense: ${updatedDefender.defense}`);
             }
 
             const hpDamage = damage - defenseDamage;
             if (hpDamage > 0) {
               updatedDefender.hp = Math.max(0, updatedDefender.hp - hpDamage);
+              addFloatingText(`-${hpDamage}`, targetTeam, 'damage');
               addToLog(`${updatedDefender.name} takes ${hpDamage} HP damage! Remaining HP: ${updatedDefender.hp}`);
             }
             
@@ -182,18 +197,22 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
         case 'defense':
             const defenseBoost = selectedAbility.defenseBoost || 0;
             updatedAttacker.defense += defenseBoost;
+            addFloatingText(`+${defenseBoost} Def`, 'player', 'heal');
             addToLog(`${updatedAttacker.name}'s defense rose by ${defenseBoost}!`);
             break;
 
         case 'heal':
             const healAmount = selectedAbility.power || 0;
+            const oldHp = updatedAttacker.hp;
             const newHp = Math.min(updatedAttacker.maxHp, updatedAttacker.hp + healAmount);
-            addToLog(`${updatedAttacker.name} heals for ${newHp - updatedAttacker.hp} HP!`);
+            addFloatingText(`+${newHp - oldHp}`, 'player', 'heal');
+            addToLog(`${updatedAttacker.name} heals for ${newHp - oldHp} HP!`);
             updatedAttacker.hp = newHp;
             break;
         
         case 'buff':
         case 'debuff':
+             addFloatingText(`No effect...`, 'opponent', 'info');
              addToLog(`...but it had no immediate effect.`);
             break;
     }
@@ -212,7 +231,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     
     setSelectedAbility(null);
     setTimeout(() => setIsPlayerTurn(prev => !prev), 100);
-  }, [activePlayerCreature, activeOpponentCreature, selectedAbility, playerBattleTeam, opponentTeam, updateCreatureState]);
+  }, [activePlayerCreature, activeOpponentCreature, selectedAbility, playerBattleTeam, opponentTeam, updateCreatureState, addFloatingText]);
 
   const checkBattleEnd = useCallback(() => {
     if (battleStatus !== 'in_progress') return;
@@ -244,6 +263,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
         const nextPlayerCreature = playerBattleTeam.find(c => c.hp > 0);
         if (nextPlayerCreature) {
             addToLog(`${activePlayerCreature.name} has fainted!`);
+            addFloatingText('Fainted!', 'player', 'info');
             if(isPlayerTurn) {
                 setShowSwitchDialog(true);
             }
@@ -254,6 +274,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
         const nextOpponentCreature = opponentTeam.find(c => c.hp > 0);
         if (nextOpponentCreature) {
             addToLog(`${activeOpponentCreature.name} has fainted!`);
+            addFloatingText('Fainted!', 'opponent', 'info');
             setActiveOpponentCreature(nextOpponentCreature);
             addToLog(`Opponent sends out ${nextOpponentCreature.name}!`);
         }
@@ -261,6 +282,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
 
     if (isPlayerTurn && activePlayerCreature?.isSleeping) {
         addToLog(`${activePlayerCreature.name} woke up!`);
+        addFloatingText('Woke up!', 'player', 'info');
         updateCreatureState(activePlayerCreature.id, { isSleeping: false }, 'player');
         setTimeout(() => setIsPlayerTurn(false), 1000);
         return;
@@ -269,6 +291,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     if (!isPlayerTurn && battleStatus === 'in_progress' && activeOpponentCreature) {
         if (activeOpponentCreature.isSleeping) {
             addToLog(`${activeOpponentCreature.name} is asleep! It woke up!`);
+            addFloatingText('Woke up!', 'opponent', 'info');
             updateCreatureState(activeOpponentCreature.id, { isSleeping: false }, 'opponent');
             setTimeout(() => setIsPlayerTurn(true), 1500);
             return;
@@ -292,21 +315,27 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
                           const defenseDamage = Math.min(updatedDefender.defense, damage);
                           if (defenseDamage > 0) {
                               updatedDefender.defense -= defenseDamage;
+                              addFloatingText(`-${defenseDamage} Def`, 'player', 'damage');
                               addToLog(`Your ${updatedDefender.name}'s defense absorbed ${defenseDamage} damage!`);
                           }
                           const hpDamage = damage - defenseDamage;
                           if (hpDamage > 0) {
                               updatedDefender.hp = Math.max(0, updatedDefender.hp - hpDamage);
+                              addFloatingText(`-${hpDamage}`, 'player', 'damage');
                               addToLog(`Your ${updatedDefender.name} takes ${hpDamage} HP damage!`);
                           }
                           updateCreatureState(updatedDefender.id, { hp: updatedDefender.hp, defense: updatedDefender.defense }, 'player');
                           break;
                       case 'defense':
-                          updatedAttacker.defense += ability.defenseBoost || 0;
+                          const defenseBoost = ability.defenseBoost || 0;
+                          updatedAttacker.defense += defenseBoost;
+                          addFloatingText(`+${defenseBoost} Def`, 'opponent', 'heal');
                           addToLog(`Opponent's ${updatedAttacker.name}'s defense rose!`);
                           break;
                       case 'heal':
+                          const oldHp = updatedAttacker.hp;
                           const newHp = Math.min(updatedAttacker.maxHp, updatedAttacker.hp + (ability.power || 0));
+                          addFloatingText(`+${newHp - oldHp}`, 'opponent', 'heal');
                           addToLog(`Opponent's ${updatedAttacker.name} heals!`);
                           updatedAttacker.hp = newHp;
                           break;
@@ -316,6 +345,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
                   
                   if (updatedAttacker.energy <= 0) {
                       updatedAttacker.isSleeping = true;
+                      addFloatingText('Asleep!', 'opponent', 'info');
                       addToLog(`Opponent's ${updatedAttacker.name} ran out of energy and fell asleep!`);
                   }
               
@@ -327,6 +357,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
             return () => clearTimeout(timeout);
         } else {
              addToLog(`${activeOpponentCreature.name} has no energy to use an ability and fell asleep!`);
+             addFloatingText('Asleep!', 'opponent', 'info');
              updateCreatureState(activeOpponentCreature.id, { isSleeping: true }, 'opponent');
              setTimeout(() => setIsPlayerTurn(true), 1500);
         }
@@ -334,7 +365,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
         setIsPlayerTurn(true);
       }
     }
-  }, [isPlayerTurn, battleStatus, playerBattleTeam, opponentTeam, activePlayerCreature, activeOpponentCreature, updateCreatureState]);
+  }, [isPlayerTurn, battleStatus, playerBattleTeam, opponentTeam, activePlayerCreature, activeOpponentCreature, updateCreatureState, addFloatingText]);
 
   useEffect(() => {
       checkBattleEnd();
@@ -360,7 +391,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
         addToLog(`Go, ${creature.name}!`);
         setShowSwitchDialog(false);
         setRemainingSwitches(prev => prev - 1);
-        setIsPlayerTurn(true); // Player keeps the turn after switching
+        setIsPlayerTurn(false); // Switching costs a turn
     }
   }
   
@@ -416,6 +447,16 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     onBattleEnd();
     resetBattleState();
   }
+  
+  const getFloatingTextClass = (type: FloatingText['type']) => {
+    switch (type) {
+      case 'damage': return 'text-red-500';
+      case 'heal': return 'text-green-400';
+      case 'info':
+      default:
+        return 'text-white';
+    }
+  }
 
   return (
     <>
@@ -437,8 +478,13 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-11 gap-4 items-start">
-              <div className="space-y-4 md:col-span-5">
+              <div className="space-y-4 md:col-span-5 relative">
                   <h3 className="text-xl font-headline text-center text-green-400">Your Team</h3>
+                   {floatingTexts.filter(t => t.team === 'player').map(t => (
+                      <div key={t.id} className={`animate-float-up absolute top-1/2 left-1/2 -translate-x-1/2 z-10 text-2xl font-bold stroke-black text-shadow-lg ${getFloatingTextClass(t.type)}`}>
+                          {t.text}
+                      </div>
+                  ))}
                   {activePlayerCreature && 
                       <CreatureCard 
                           creature={activePlayerCreature} 
@@ -470,8 +516,13 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
                   )}
               </div>
 
-              <div className="space-y-4 md:col-span-5">
+              <div className="space-y-4 md:col-span-5 relative">
                   <h3 className="text-xl font-headline text-center text-red-400">Opponent</h3>
+                   {floatingTexts.filter(t => t.team === 'opponent').map(t => (
+                      <div key={t.id} className={`animate-float-up absolute top-1/2 left-1/2 -translate-x-1/2 z-10 text-2xl font-bold stroke-black text-shadow-lg ${getFloatingTextClass(t.type)}`}>
+                          {t.text}
+                      </div>
+                  ))}
                   {activeOpponentCreature && <CreatureCard creature={activeOpponentCreature} showCurrentDefense />}
               </div>
           </div>
