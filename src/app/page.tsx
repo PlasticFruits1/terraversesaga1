@@ -15,7 +15,7 @@ import { story, type StoryChapter } from '@/lib/story';
 import type { Creature } from '@/types';
 
 export default function Home() {
-  const { gameState, saveGame, loadGame, resetGame, setGameState, unlockCreature, advanceStory } = useGameState();
+  const { gameState, saveGame, loadGame, resetGame, setGameState, unlockCreature, advanceStory, setPlayerTeam } = useGameState();
 
   const handleBattleWin = React.useCallback((wonOpponentCreatures: Creature[]) => {
     // The unlockCreature hook now handles filtering, so we pass the whole list
@@ -74,10 +74,15 @@ export default function Home() {
             <MapView />
           </TabsContent>
           <TabsContent value="roster" className="mt-4">
-            <RosterView creatures={gameState.playerCreatures} />
+            <RosterView 
+              allCreatures={gameState.playerCreatures} 
+              team={gameState.playerTeam}
+              onSetTeam={setPlayerTeam}
+            />
           </TabsContent>
           <TabsContent value="battle" className="mt-4">
             <BattleView
+              playerTeam={gameState.playerTeam}
               playerCreatures={gameState.playerCreatures}
               storyChapter={currentChapter}
               setGameState={setGameState}

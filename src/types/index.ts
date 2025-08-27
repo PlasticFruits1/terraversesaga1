@@ -30,6 +30,7 @@ export interface Creature {
 
 export interface GameState {
   playerCreatures: Creature[];
+  playerTeam: Creature[];
   opponentCreatures: Creature[];
   storyProgress: number;
 }

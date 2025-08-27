@@ -21,10 +21,14 @@ const initializeCreatures = (creatures: Creature[]): Creature[] => {
 };
 
 
-const initialGameState: GameState = {
-  playerCreatures: initializeCreatures(initialCreatures),
-  opponentCreatures: initializeCreatures(opponentCreatures),
-  storyProgress: 0,
+const getInitialState = (): GameState => {
+    const playerCreatures = initializeCreatures(initialCreatures);
+    return {
+        playerCreatures,
+        playerTeam: playerCreatures.slice(0, 3), // Start with the first 3
+        opponentCreatures: initializeCreatures(opponentCreatures),
+        storyProgress: 0,
+    };
 };
 
 export function useGameState() {
@@ -44,15 +48,24 @@ export function useGameState() {
         if (loadedState.storyProgress === undefined) {
           loadedState.storyProgress = 0;
         }
+         // Handle backward compatibility for saves without a playerTeam
+        if (!loadedState.playerTeam || loadedState.playerTeam.length === 0) {
+            loadedState.playerTeam = loadedState.playerCreatures.slice(0, 3);
+        } else {
+            // Ensure team is also initialized properly
+            loadedState.playerTeam = initializeCreatures(loadedState.playerTeam);
+        }
+
         previousCreatureCount.current = loadedState.playerCreatures.length;
         setGameState(loadedState);
       } else {
-        previousCreatureCount.current = initialGameState.playerCreatures.length;
-        setGameState(initialGameState);
+        const initialState = getInitialState();
+        previousCreatureCount.current = initialState.playerCreatures.length;
+        setGameState(initialState);
       }
     } catch (error) {
       console.error("Failed to load game state from localStorage", error);
-      setGameState(initialGameState);
+      setGameState(getInitialState());
     }
   }, []);
 
@@ -97,6 +110,13 @@ export function useGameState() {
         const loadedState = JSON.parse(savedGame);
         // Ensure creatures have their runtime stats initialized correctly
         loadedState.playerCreatures = initializeCreatures(loadedState.playerCreatures);
+         // Handle backward compatibility for saves without a playerTeam
+        if (!loadedState.playerTeam || loadedState.playerTeam.length === 0) {
+            loadedState.playerTeam = loadedState.playerCreatures.slice(0, 3);
+        } else {
+             // Ensure team is also initialized properly
+            loadedState.playerTeam = initializeCreatures(loadedState.playerTeam);
+        }
         // Always load the canonical opponent list and initialize it
         loadedState.opponentCreatures = initializeCreatures(opponentCreatures);
         if (loadedState.storyProgress === undefined) {
@@ -106,7 +126,7 @@ export function useGameState() {
         toast({ title: "Game Loaded!", description: "Your saved progress has been loaded." });
       } else {
         toast({ title: "No Save Data", description: "No saved game found. Starting fresh." });
-        setGameState(initialGameState);
+        setGameState(getInitialState());
       }
     } catch (error) {
       toast({ variant: "destructive", title: "Load Failed", description: "Could not load saved data." });
@@ -116,12 +136,7 @@ export function useGameState() {
 
   const resetGame = useCallback(() => {
     localStorage.removeItem(GAME_SAVE_KEY);
-    const freshState: GameState = {
-        playerCreatures: initializeCreatures(initialCreatures),
-        opponentCreatures: initializeCreatures(opponentCreatures),
-        storyProgress: 0,
-    };
-    setGameState(freshState);
+    setGameState(getInitialState());
     toast({ title: "Game Reset!", description: "Your game has been reset to its initial state." });
   }, [toast]);
 
@@ -134,9 +149,17 @@ export function useGameState() {
         );
 
         if (newCreatures.length > 0) {
+             const updatedCreatures = [...prevState.playerCreatures, ...initializeCreatures(newCreatures)];
+            // If the team isn't full, add the new creature to it
+            const updatedTeam = [...prevState.playerTeam];
+            if (updatedTeam.length < 3) {
+                const creaturesToAdd = initializeCreatures(newCreatures).slice(0, 3 - updatedTeam.length);
+                updatedTeam.push(...creaturesToAdd);
+            }
             return {
                 ...prevState,
-                playerCreatures: [...prevState.playerCreatures, ...initializeCreatures(newCreatures)]
+                playerCreatures: updatedCreatures,
+                playerTeam: updatedTeam,
             };
         }
         return prevState;
@@ -155,6 +178,22 @@ export function useGameState() {
       return prevState; // Or handle game completion
     });
   }, [toast]);
+  
+  const setPlayerTeam = useCallback((team: Creature[]) => {
+    if (team.length > 3) {
+        toast({ variant: "destructive", title: "Invalid Team", description: "Team can have a maximum of 3 creatures." });
+        return;
+    }
+     setGameState(prevState => {
+        if (!prevState) return null;
+        return {
+            ...prevState,
+            playerTeam: team
+        }
+     });
+     toast({ title: "Team Updated", description: "Your battle team has been set." });
+  }, [toast]);
 
-  return { gameState, saveGame, loadGame, resetGame, setGameState: setGameState as Dispatch<SetStateAction<GameState>>, unlockCreature, advanceStory };
+
+  return { gameState, saveGame, loadGame, resetGame, setGameState: setGameState as Dispatch<SetStateAction<GameState>>, unlockCreature, advanceStory, setPlayerTeam };
 }
