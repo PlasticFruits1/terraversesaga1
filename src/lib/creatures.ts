@@ -177,7 +177,7 @@ const regularOpponents: Creature[] = [
     defense: 80,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://i.imgur.com/D4s2yPz.png",
+    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
     aiHint: "glowing stone turtle",
     abilities: [
         { name: "Shell Smash", type: "attack", power: 30, description: "A powerful body slam.", energyCost: 20 },
@@ -195,12 +195,102 @@ const regularOpponents: Creature[] = [
     defense: 45,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://i.imgur.com/S9sJwvE.png",
+    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
     aiHint: "shadow wolf beast",
     abilities: [
         { name: "Shadow Claw", type: "attack", power: 35, description: "Slashes with claws of darkness.", energyCost: 20 },
         { name: "Howl", type: "buff", description: "A chilling howl that raises attack.", energyCost: 15 },
         { name: "Bite", type: "attack", power: 25, description: "A standard, vicious bite.", energyCost: 15 }
+    ]
+  },
+  {
+    id: 29,
+    name: "Vine-Crawler",
+    type: "Terra",
+    hp: 65,
+    maxHp: 65,
+    attack: 50,
+    defense: 55,
+    energy: 100,
+    maxEnergy: 100,
+    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    aiHint: "sentient vine monster",
+    abilities: [
+        { name: "Leech Seed", type: "heal", power: 15, description: "Saps opponent's HP each turn.", energyCost: 25 },
+        { name: "Razor Leaf", type: "attack", power: 30, description: "Slices with sharp-edged leaves.", energyCost: 20 },
+        { name: "Camouflage", type: "defense", defenseBoost: 20, description: "Blends in to raise defense.", energyCost: 20 }
+    ]
+  },
+  {
+    id: 30,
+    name: "Geyser-Fin",
+    type: "Aqua",
+    hp: 50,
+    maxHp: 50,
+    attack: 65,
+    defense: 45,
+    energy: 100,
+    maxEnergy: 100,
+    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    aiHint: "geyser fish",
+    abilities: [
+        { name: "Scald", type: "attack", power: 38, description: "Shoots boiling water.", energyCost: 25 },
+        { name: "Aqua Ring", type: "heal", power: 20, description: "Restores a little HP each turn.", energyCost: 30 },
+        { name: "Dive", type: "attack", power: 35, description: "Dives then strikes on the next turn.", energyCost: 25 }
+    ]
+  },
+  {
+    id: 31,
+    name: "Zephyr-Wisp",
+    type: "Aero",
+    hp: 45,
+    maxHp: 45,
+    attack: 68,
+    defense: 40,
+    energy: 100,
+    maxEnergy: 100,
+    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    aiHint: "glowing wind spirit",
+    abilities: [
+        { name: "Twister", type: "attack", power: 35, description: "Whips up a vicious twister.", energyCost: 25 },
+        { name: "Agility", type: "buff", description: "Greatly raises its speed.", energyCost: 15 },
+        { name: "Feather Dance", type: "debuff", description: "Lowers the opponent's attack.", energyCost: 20 }
+    ]
+  },
+  {
+    id: 32,
+    name: "Magma-Pup",
+    type: "Ignis",
+    hp: 60,
+    maxHp: 60,
+    attack: 60,
+    defense: 60,
+    energy: 100,
+    maxEnergy: 100,
+    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    aiHint: "magma puppy",
+    abilities: [
+        { name: "Lava Plume", type: "attack", power: 40, description: "A blast of lava.", energyCost: 30 },
+        { name: "Rock Polish", type: "buff", description: "Boosts its speed.", energyCost: 15 },
+        { name: "Eruption", type: "attack", power: 50, description: "A powerful volcanic eruption.", energyCost: 35 }
+    ]
+  },
+  {
+    id: 33,
+    name: "Celestial-Kirin",
+    type: "Lux",
+    hp: 70,
+    maxHp: 70,
+    attack: 50,
+    defense: 65,
+    energy: 100,
+    maxEnergy: 100,
+    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    aiHint: "divine unicorn beast",
+    abilities: [
+        { name: "Holy Light", type: "heal", power: 30, description: "Bathes in holy light to heal.", energyCost: 30 },
+        { name: "Horn Drill", type: "attack", power: 45, description: "A powerful, focused horn attack.", energyCost: 30 },
+        { name: "Mystic Veil", type: "defense", defenseBoost: 25, description: "A magical veil boosts defense.", energyCost: 25 }
     ]
   }
 ];
@@ -288,12 +378,48 @@ const bossCreatures: Creature[] = [
     defense: 85,
     energy: 150,
     maxEnergy: 150,
-    imageUrl: "https://i.imgur.com/s64bYkI.png",
+    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
     aiHint: "clockwork dragon",
     abilities: [
         { name: "Time Rift", type: "attack", power: 60, description: "Tears a hole in time to strike.", energyCost: 35 },
         { name: "Stasis Field", type: "debuff", description: "May cause the opponent to lose a turn.", energyCost: 40 },
         { name: "Temporal Heal", type: "heal", power: 50, description: "Reverts its own wounds by rewinding time.", energyCost: 45 }
+    ]
+  },
+  {
+    id: 106,
+    name: "Void-Reaver",
+    type: "Umbra",
+    hp: 180,
+    maxHp: 180,
+    attack: 105,
+    defense: 75,
+    energy: 140,
+    maxEnergy: 140,
+    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    aiHint: "eldritch void monster",
+    abilities: [
+        { name: "Abyssal Grasp", type: "attack", power: 65, description: "Tendrils of shadow lash out.", energyCost: 35 },
+        { name: "Consume Light", type: "heal", power: 40, description: "Drains life from the opponent.", energyCost: 40 },
+        { name: "Oblivion", type: "attack", power: 80, description: "A blast of pure void energy.", energyCost: 50 }
+    ]
+  },
+  {
+    id: 107,
+    name: "Nexus-Guardian",
+    type: "Terra",
+    hp: 250,
+    maxHp: 250,
+    attack: 90,
+    defense: 100,
+    energy: 200,
+    maxEnergy: 200,
+    imageUrl: "REPLACE_WITH_IMAGE_URL.png",
+    aiHint: "elemental crystal titan",
+    abilities: [
+        { name: "Prismatic Wave", type: "attack", power: 70, description: "Unleashes a wave of mixed elemental energy.", energyCost: 40 },
+        { name: "Elemental Shift", type: "defense", defenseBoost: 40, description: "Changes its resistance by shifting elements.", energyCost: 30 },
+        { name: "Core Eruption", type: "attack", power: 90, description: "The ultimate elemental blast.", energyCost: 60 }
     ]
   }
 ];
