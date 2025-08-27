@@ -41,7 +41,7 @@ interface BattleViewProps {
 
 const MAX_SWITCHES = 3;
 
-type BattleStatus = 'awaiting' | 'team_selection' | 'in_progress' | 'finished';
+type BattleStatus = 'awaiting' | 'in_progress' | 'finished';
 
 export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatures, allOpponentCreatures, storyChapter, setGameState, onBattleWin, onBattleEnd }: BattleViewProps) {
   const [battleStatus, setBattleStatus] = useState<BattleStatus>('awaiting');
@@ -73,6 +73,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
       setBattleLog([]);
       setBattleOutcome(null);
       setSelectedAbility(null);
+      setShowTeamSelectionDialog(false); // Ensure dialog is closed on reset
       setSelectedPlayerTeamForDialog(initialPlayerTeam);
   }, [initialPlayerTeam]);
   
@@ -119,7 +120,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     setBattleOutcome(null);
     setRemainingSwitches(MAX_SWITCHES);
     setBattleStatus('in_progress');
-    setShowTeamSelectionDialog(false);
+    setShowTeamSelectionDialog(false); // Close dialog after starting
 
   }, [selectedPlayerTeamForDialog, storyChapter, allOpponentCreatures, toast, resetBattleState, initialPlayerTeam, showTeamSelectionDialog]);
   
@@ -131,6 +132,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
       if (prev.length < 3) {
         return [...prev, creature];
       }
+      toast({ title: "Team Full", description: "You can only select up to 3 creatures for your team.", duration: 3000 });
       return prev;
     });
   };
@@ -449,137 +451,137 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
   }
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader>
-        <CardTitle className="font-headline text-2xl flex justify-between items-center">
-            <span>Battle Arena</span>
-            <div className='flex items-center gap-4'>
-                <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => setShowSwitchDialog(true)}
-                    disabled={!isPlayerTurn || battleStatus !== 'in_progress' || playerBattleTeam.filter(c => c.hp > 0).length <= 1 || remainingSwitches <= 0 || activePlayerCreature?.isSleeping}
-                 >
-                  <Repeat className="mr-2 h-4 w-4"/> Switch ({remainingSwitches} left)
-                </Button>
-            </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-11 gap-4 items-start">
-            <div className="space-y-4 md:col-span-5">
-                <h3 className="text-xl font-headline text-center text-green-400">Your Team</h3>
-                {activePlayerCreature && 
-                    <CreatureCard 
-                        creature={activePlayerCreature} 
-                        showCurrentDefense 
-                        isActionable={canPlayerAct}
-                        onAbilitySelect={handleAbilitySelect}
-                    />
-                }
-                <div className="flex justify-center gap-2">
-                    {playerBattleTeam.map(c => (
-                        <button key={c.id} onClick={() => setShowSwitchDialog(true)} disabled={c.id === activePlayerCreature?.id || c.hp <= 0}>
-                            <img src={c.imageUrl} alt={c.name} className={`w-12 h-12 rounded-full border-2 ${c.id === activePlayerCreature?.id ? 'border-primary' : 'border-muted'} ${c.hp <= 0 ? 'grayscale opacity-50' : ''}`} />
-                        </button>
-                    ))}
-                </div>
-            </div>
+    <>
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <CardTitle className="font-headline text-2xl flex justify-between items-center">
+              <span>Battle Arena</span>
+              <div className='flex items-center gap-4'>
+                  <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setShowSwitchDialog(true)}
+                      disabled={!isPlayerTurn || battleStatus !== 'in_progress' || playerBattleTeam.filter(c => c.hp > 0).length <= 1 || remainingSwitches <= 0 || activePlayerCreature?.isSleeping}
+                  >
+                    <Repeat className="mr-2 h-4 w-4"/> Switch ({remainingSwitches} left)
+                  </Button>
+              </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-11 gap-4 items-start">
+              <div className="space-y-4 md:col-span-5">
+                  <h3 className="text-xl font-headline text-center text-green-400">Your Team</h3>
+                  {activePlayerCreature && 
+                      <CreatureCard 
+                          creature={activePlayerCreature} 
+                          showCurrentDefense 
+                          isActionable={canPlayerAct}
+                          onAbilitySelect={handleAbilitySelect}
+                      />
+                  }
+                  <div className="flex justify-center gap-2">
+                      {playerBattleTeam.map(c => (
+                          <button key={c.id} onClick={() => setShowSwitchDialog(true)} disabled={c.id === activePlayerCreature?.id || c.hp <= 0}>
+                              <img src={c.imageUrl} alt={c.name} className={`w-12 h-12 rounded-full border-2 ${c.id === activePlayerCreature?.id ? 'border-primary' : 'border-muted'} ${c.hp <= 0 ? 'grayscale opacity-50' : ''}`} />
+                          </button>
+                      ))}
+                  </div>
+              </div>
 
-            <div className="space-y-2 md:col-span-1 flex flex-col items-center justify-center h-full">
-                 <Swords size={48} className="text-muted-foreground my-4" />
-                 <ScrollArea className="h-40 w-full rounded-md border p-2 bg-muted/50 text-center">
-                    <h3 className="font-headline text-lg mb-2">Battle Log</h3>
-                    {battleLog.map((log, index) => <p key={index} className="text-sm mb-1">{log}</p>)}
-                </ScrollArea>
-                 {battleStatus === 'finished' && (
-                    <div className="text-center p-4">
-                        <p className="font-bold text-2xl mb-2">{battleOutcome === 'win' ? 'VICTORY' : 'DEFEAT'}</p>
-                        <Button onClick={handleEndBattleClick} className="mt-2">Continue Story</Button>
-                    </div>
-                )}
-            </div>
+              <div className="space-y-2 md:col-span-1 flex flex-col items-center justify-center h-full">
+                  <Swords size={48} className="text-muted-foreground my-4" />
+                  <ScrollArea className="h-40 w-full rounded-md border p-2 bg-muted/50 text-center">
+                      <h3 className="font-headline text-lg mb-2">Battle Log</h3>
+                      {battleLog.map((log, index) => <p key={index} className="text-sm mb-1">{log}</p>)}
+                  </ScrollArea>
+                  {battleStatus === 'finished' && (
+                      <div className="text-center p-4">
+                          <p className="font-bold text-2xl mb-2">{battleOutcome === 'win' ? 'VICTORY' : 'DEFEAT'}</p>
+                          <Button onClick={handleEndBattleClick} className="mt-2">Continue Story</Button>
+                      </div>
+                  )}
+              </div>
 
-            <div className="space-y-4 md:col-span-5">
-                <h3 className="text-xl font-headline text-center text-red-400">Opponent</h3>
-                {activeOpponentCreature && <CreatureCard creature={activeOpponentCreature} showCurrentDefense />}
-            </div>
-        </div>
-        
-        <AlertDialog open={!!selectedAbility} onOpenChange={() => setSelectedAbility(null)}>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Confirm Action</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        Are you sure you want {activePlayerCreature?.name} to use {selectedAbility?.name}?
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel onClick={() => setSelectedAbility(null)}>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleAbilityUse}>Confirm</AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
+              <div className="space-y-4 md:col-span-5">
+                  <h3 className="text-xl font-headline text-center text-red-400">Opponent</h3>
+                  {activeOpponentCreature && <CreatureCard creature={activeOpponentCreature} showCurrentDefense />}
+              </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <AlertDialog open={!!selectedAbility} onOpenChange={() => setSelectedAbility(null)}>
+          <AlertDialogContent>
+              <AlertDialogHeader>
+                  <AlertDialogTitle>Confirm Action</AlertDialogTitle>
+                  <AlertDialogDescription>
+                      Are you sure you want {activePlayerCreature?.name} to use {selectedAbility?.name}?
+                  </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                  <AlertDialogCancel onClick={() => setSelectedAbility(null)}>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleAbilityUse}>Confirm</AlertDialogAction>
+              </AlertDialogFooter>
+          </AlertDialogContent>
+      </AlertDialog>
 
-        <Dialog open={showSwitchDialog} onOpenChange={setShowSwitchDialog}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Switch Creature</DialogTitle>
-                    <DialogDescription>Select a creature to switch to. You have {remainingSwitches} switches left.</DialogDescription>
-                </DialogHeader>
-                <div className="grid grid-cols-3 gap-4 py-4">
-                    {playerBattleTeam.map(c => (
-                        <div key={c.id} onClick={() => handleSwitchCreature(c)} className={`cursor-pointer ${c.id === activePlayerCreature?.id || c.hp <= 0 ? 'opacity-50 cursor-not-allowed' : 'hover:ring-2 hover:ring-primary rounded-lg'}`}>
-                             <CreatureCard
-                                creature={c}
-                                isSelectable={!(c.id === activePlayerCreature?.id || c.hp <= 0)}
-                                isSelected={c.id === activePlayerCreature?.id}
-                                className="w-full"
-                            />
-                        </div>
-                    ))}
-                </div>
-                <DialogFooter>
-                    <Button variant="secondary" onClick={() => {
-                        if(activePlayerCreature?.hp <= 0) return;
-                        setShowSwitchDialog(false)
-                    }}>
-                        Cancel
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+      <Dialog open={showSwitchDialog} onOpenChange={setShowSwitchDialog}>
+          <DialogContent>
+              <DialogHeader>
+                  <DialogTitle>Switch Creature</DialogTitle>
+                  <DialogDescription>Select a creature to switch to. You have {remainingSwitches} switches left.</DialogDescription>
+              </DialogHeader>
+              <div className="grid grid-cols-3 gap-4 py-4">
+                  {playerBattleTeam.map(c => (
+                      <div key={c.id} onClick={() => handleSwitchCreature(c)} className={`cursor-pointer ${c.id === activePlayerCreature?.id || c.hp <= 0 ? 'opacity-50 cursor-not-allowed' : 'hover:ring-2 hover:ring-primary rounded-lg'}`}>
+                           <CreatureCard
+                              creature={c}
+                              isSelectable={!(c.id === activePlayerCreature?.id || c.hp <= 0)}
+                              isSelected={c.id === activePlayerCreature?.id}
+                              className="w-full"
+                          />
+                      </div>
+                  ))}
+              </div>
+              <DialogFooter>
+                  <Button variant="secondary" onClick={() => {
+                      if(activePlayerCreature?.hp <= 0) return;
+                      setShowSwitchDialog(false)
+                  }}>
+                      Cancel
+                  </Button>
+              </DialogFooter>
+          </DialogContent>
+      </Dialog>
 
-        <Dialog open={showTeamSelectionDialog} onOpenChange={setShowTeamSelectionDialog}>
-             <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Change Your Team</DialogTitle>
-                    <DialogDescription>Select up to 3 creatures for the next battle.</DialogDescription>
-                </DialogHeader>
-                <ScrollArea className="max-h-[60vh] -mx-6 px-6">
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 py-4">
-                        {playerCreatures.map(c => (
-                            <CreatureCard 
-                                key={c.id} 
-                                creature={c} 
-                                isSelectable 
-                                isSelected={selectedPlayerTeamForDialog.some(sc => sc.id === c.id)}
-                                onSelect={() => handleSelectCreatureForDialog(c)}
-                            />
-                        ))}
-                    </div>
-                </ScrollArea>
-                <DialogFooter>
-                    <Button variant="outline" onClick={() => setShowTeamSelectionDialog(false)}>Cancel</Button>
-                    <Button onClick={startBattle} disabled={selectedPlayerTeamForDialog.length === 0 || selectedPlayerTeamForDialog.length > 3}>
-                        Confirm Team & Start Battle ({selectedPlayerTeamForDialog.length}/3)
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-      </CardContent>
-    </Card>
+      <Dialog open={showTeamSelectionDialog} onOpenChange={setShowTeamSelectionDialog}>
+           <DialogContent>
+              <DialogHeader>
+                  <DialogTitle>Change Your Team</DialogTitle>
+                  <DialogDescription>Select up to 3 creatures for the next battle.</DialogDescription>
+              </DialogHeader>
+              <ScrollArea className="max-h-[60vh] -mx-6 px-6">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 py-4">
+                      {playerCreatures.map(c => (
+                          <CreatureCard 
+                              key={c.id} 
+                              creature={c} 
+                              isSelectable 
+                              isSelected={selectedPlayerTeamForDialog.some(sc => sc.id === c.id)}
+                              onSelect={() => handleSelectCreatureForDialog(c)}
+                          />
+                      ))}
+                  </div>
+              </ScrollArea>
+              <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowTeamSelectionDialog(false)}>Cancel</Button>
+                  <Button onClick={startBattle} disabled={selectedPlayerTeamForDialog.length === 0 || selectedPlayerTeamForDialog.length > 3}>
+                      Confirm Team & Start Battle ({selectedPlayerTeamForDialog.length}/3)
+                  </Button>
+              </DialogFooter>
+          </DialogContent>
+      </Dialog>
+    </>
   );
 }
-
-    
