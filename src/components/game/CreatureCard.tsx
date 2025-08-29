@@ -128,8 +128,9 @@ export default function CreatureCard({
                             <TooltipContent>
                                 <p className="font-bold">{ability.name} ({ability.type})</p>
                                 <p className="text-sm max-w-xs">{ability.description}</p>
-                                {ability.power && <p className="text-xs">Power: {ability.power}</p>}
-                                {ability.defenseBoost && <p className="text-xs">Defense: +{ability.defenseBoost}</p>}
+                                {ability.type === 'attack' && ability.power && <p className="text-xs">Power: {ability.power}</p>}
+                                {ability.type === 'defense' && ability.defenseBoost && <p className="text-xs">Defense: +{ability.defenseBoost}</p>}
+                                {ability.type === 'heal' && ability.power && <p className="text-xs">Heals: +{ability.power} HP</p>}
                                 <p className="text-xs">Cost: {ability.energyCost} Energy</p>
                             </TooltipContent>
                         </Tooltip>
@@ -142,3 +143,5 @@ export default function CreatureCard({
     </div>
   );
 }
+
+    

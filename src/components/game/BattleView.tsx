@@ -176,15 +176,18 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
             if (!defender) return;
             let updatedDefender = { ...defender };
             
-            const baseDamage = attacker.attack + (selectedAbility.power || 0);
-            const damage = Math.max(1, baseDamage - updatedDefender.defense);
-            
-            updatedDefender.hp = Math.max(0, updatedDefender.hp - damage);
+            const totalDamage = attacker.attack + (selectedAbility.power || 0);
+            const defenseDamage = Math.min(updatedDefender.defense, totalDamage);
+            const remainingDamage = totalDamage - defenseDamage;
 
-            addFloatingText(`-${damage}`, targetTeam, 'damage');
-            addToLog(`${updatedDefender.name} takes ${damage} damage! Remaining HP: ${updatedDefender.hp}`);
+            updatedDefender.defense -= defenseDamage;
+            updatedDefender.hp -= remainingDamage;
+            updatedDefender.hp = Math.max(0, updatedDefender.hp);
+
+            addFloatingText(`-${totalDamage}`, targetTeam, 'damage');
+            addToLog(`${updatedDefender.name} takes ${totalDamage} damage! Remaining HP: ${updatedDefender.hp}`);
             
-            updateCreatureState(updatedDefender.id, { hp: updatedDefender.hp }, targetTeam);
+            updateCreatureState(updatedDefender.id, { hp: updatedDefender.hp, defense: updatedDefender.defense }, targetTeam);
             break;
         
         case 'defense':
@@ -320,12 +323,17 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
                   switch (ability.type) {
                       case 'attack':
                           let updatedDefender = { ...defender };
-                          const baseDamage = attacker.attack + (ability.power || 0);
-                          const damage = Math.max(1, baseDamage - updatedDefender.defense);
-                          updatedDefender.hp = Math.max(0, updatedDefender.hp - damage);
-                          addFloatingText(`-${damage}`, 'player', 'damage');
-                          addToLog(`Your ${updatedDefender.name} takes ${damage} damage!`);
-                          updateCreatureState(updatedDefender.id, { hp: updatedDefender.hp }, 'player');
+                          const totalDamage = attacker.attack + (ability.power || 0);
+                          const defenseDamage = Math.min(updatedDefender.defense, totalDamage);
+                          const remainingDamage = totalDamage - defenseDamage;
+
+                          updatedDefender.defense -= defenseDamage;
+                          updatedDefender.hp -= remainingDamage;
+                          updatedDefender.hp = Math.max(0, updatedDefender.hp);
+                          
+                          addFloatingText(`-${totalDamage}`, 'player', 'damage');
+                          addToLog(`Your ${updatedDefender.name} takes ${totalDamage} damage!`);
+                          updateCreatureState(updatedDefender.id, { hp: updatedDefender.hp, defense: updatedDefender.defense }, 'player');
                           break;
                       case 'defense':
                           const defenseBoost = ability.defenseBoost || 0;
