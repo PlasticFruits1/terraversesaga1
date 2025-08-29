@@ -435,7 +435,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
                              <Image
                                 src={opponent.imageUrl}
                                 alt={`Image of ${opponent.name}`}
-                                layout="fill"
+                                fill
                                 objectFit="cover"
                                 data-ai-hint={opponent.aiHint}
                             />
@@ -468,7 +468,10 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
   }
 
   const handleEndBattleClick = () => {
-    onBattleEnd();
+    // If win, advance story. If loss, just reset.
+    if (battleOutcome === 'win') {
+        onBattleEnd();
+    }
     resetBattleState();
   }
   
@@ -538,8 +541,8 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
                   </ScrollArea>
                    {battleOutcome === 'loss' && (
                       <div className="text-center p-4">
-                          <p className="font-bold text-2xl mb-2">DEFEAT</p>
-                          <Button onClick={handleEndBattleClick} className="mt-2">Continue Story</Button>
+                          <p className="font-bold text-2xl mb-2 text-red-500">DEFEAT</p>
+                          <Button onClick={resetBattleState} className="mt-2">Try Again</Button>
                       </div>
                   )}
               </div>
