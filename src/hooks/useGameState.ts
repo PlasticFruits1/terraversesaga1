@@ -144,17 +144,25 @@ export function useGameState() {
     setGameState(prevState => {
         if (!prevState) return null;
         
-        const newCreatures = unlockedCreatures.filter(unlocked => 
-            !prevState.playerCreatures.some(existing => existing.id === unlocked.id)
-        );
+        const newCreaturesToAdd = unlockedCreatures
+            .filter(unlocked => !prevState.playerCreatures.some(existing => existing.id === unlocked.id))
+            .map(unlocked => {
+                // Find the original template to get its base stats
+                const template = opponentCreatures.find(c => c.id === unlocked.id);
+                // Return a fresh copy from the template, or the unlocked one as a fallback
+                return template ? { ...template } : unlocked;
+            });
 
-        if (newCreatures.length > 0) {
-             const updatedCreatures = [...prevState.playerCreatures, ...initializeCreatures(newCreatures)];
+
+        if (newCreaturesToAdd.length > 0) {
+             const initializedNewCreatures = initializeCreatures(newCreaturesToAdd);
+             const updatedCreatures = [...prevState.playerCreatures, ...initializedNewCreatures];
+
             // If the team isn't full, add the new creature to it
             const updatedTeam = [...prevState.playerTeam];
             if (updatedTeam.length < 3) {
-                const creaturesToAdd = initializeCreatures(newCreatures).slice(0, 3 - updatedTeam.length);
-                updatedTeam.push(...creaturesToAdd);
+                const creaturesToAddToTeam = initializedNewCreatures.slice(0, 3 - updatedTeam.length);
+                updatedTeam.push(...creaturesToAddToTeam);
             }
             return {
                 ...prevState,
