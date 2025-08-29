@@ -319,7 +319,7 @@ const regularOpponents: Creature[] = [
     defense: 95,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://placehold.co/600x400",
+    imageUrl: "https://i.imgur.com/WtXTSWA.jpg",
     aiHint: "granite golem beast",
     lore: "An evolution of the Stoneling, the Granite Golem is a massive protector of sacred mountains. Its body is formed from a single, unbroken piece of granite, granting it immense physical and magical resistance. It moves slowly but with unstoppable force, its steps shaking the very ground.",
     abilities: [
@@ -338,7 +338,7 @@ const regularOpponents: Creature[] = [
     defense: 85,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://placehold.co/600x400",
+    imageUrl: "https://i.imgur.com/QC9Te9k.jpg",
     aiHint: "coral reef guardian",
     lore: "Living fortresses of the sea, Coral Sentinels are born from ancient, vibrant reefs. They are slow-moving but incredibly resilient, their bodies providing homes for countless smaller sea creatures. When angered, a Coral Sentinel can command the reef itself to attack intruders.",
     abilities: [
@@ -357,7 +357,7 @@ const regularOpponents: Creature[] = [
     defense: 50,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://placehold.co/600x400",
+    imageUrl: "https://i.imgur.com/0Fj99r8.jpg",
     aiHint: "lightning bird creature",
     lore: "These magnificent birds live within thunderclouds, and are said to be born from lightning strikes. A Storm Strider's feathers crackle with static electricity, and it can move as fast as the lightning it commands. They are rarely seen, only appearing during the most intense storms.",
     abilities: [
@@ -376,7 +376,7 @@ const regularOpponents: Creature[] = [
     defense: 60,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://placehold.co/600x400",
+    imageUrl: "https://i.imgur.com/KifucpY.jpg",
     aiHint: "volcanic lizard beast",
     lore: "Cinderclaws are ferocious predators that make their lairs in volcanic vents. Their scales are superheated obsidian, and their claws can slice through rock. They are aggressive and territorial, using their fiery breath to hunt and to warn away rivals from their territory.",
     abilities: [
@@ -395,7 +395,7 @@ const regularOpponents: Creature[] = [
     defense: 70,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://placehold.co/600x400",
+    imageUrl: "https://i.imgur.com/gH9DiQx.jpg",
     aiHint: "glowing rune bear",
     lore: "Ancient bears that hibernate for centuries, their fur becoming covered in glowing, moss-like runes. The runes grant the Rune-Bear mystical powers, allowing it to channel the earth's energy. When awoken, they are grumpy but powerful guardians of the forest's oldest secrets.",
     abilities: [
@@ -414,7 +414,7 @@ const regularOpponents: Creature[] = [
     defense: 75,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://placehold.co/600x400",
+    imageUrl: "https://i.imgur.com/Tk3I3ZG.jpg",
     aiHint: "celestial moth",
     lore: "A mystical moth whose scales shimmer with the light of distant stars. The dust from a Dream-Weaver's wings can induce vivid dreams or terrifying nightmares. They are elusive, nocturnal creatures that feed on moonlight and are said to be manifestations of the collective unconscious.",
     abilities: [
@@ -433,7 +433,7 @@ const regularOpponents: Creature[] = [
     defense: 75,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://placehold.co/600x400",
+    imageUrl: "https://i.imgur.com/A165Zo2.jpg",
     aiHint: "deep sea octopus",
     lore: "This intelligent cephalopod dwells in the crushing pressure of the deepest oceanic trenches. Its body is made of solidified shadow and bioluminescent ink. An Abyss-Watcher can manipulate darkness to ensnare its prey and create illusions to confuse its enemies.",
     abilities: [
@@ -452,7 +452,7 @@ const regularOpponents: Creature[] = [
     defense: 60,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://placehold.co/600x400",
+    imageUrl: "https://i.imgur.com/7J9VKGj.jpg",
     aiHint: "sand cat spirit",
     lore: "A mystical feline that is born from desert heat hazes and shimmering sands. The Mirage-Cat moves with silent grace, its form wavering like a trick of the light, making it incredibly difficult to hit. It is a cunning hunter that uses its illusory nature to stalk prey across the dunes.",
     abilities: [
@@ -607,7 +607,7 @@ const bossCreatures: Creature[] = [
     defense: 80,
     energy: 160,
     maxEnergy: 160,
-    imageUrl: "https://placehold.co/600x400",
+    imageUrl: "https://i.imgur.com/q5COtZo.jpg",
     aiHint: "giant sun phoenix",
     lore: "A legendary phoenix born from the sun itself, Solaris is a being of pure, unending fire. Its wingspan creates brilliant auroras, and its cry is the sound of a solar flare. It is said that when Solaris is defeated, it is reborn from its own ashes, stronger than before.",
     abilities: [
@@ -626,7 +626,7 @@ const bossCreatures: Creature[] = [
     defense: 110,
     energy: 150,
     maxEnergy: 150,
-    imageUrl: "https://placehold.co/600x400",
+    imageUrl: "https://i.imgur.com/9bXMvx7.jpg",
     aiHint: "colossal shadow titan",
     lore: "A colossal titan forged from the absence of light and the fear of the dark. Nocturne's form is ever-changing, a mass of shadows and chilling whispers. It feeds on despair and can trap its foes in a realm of eternal twilight, draining their will to fight.",
     abilities: [
