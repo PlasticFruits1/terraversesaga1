@@ -246,9 +246,134 @@ export const story: StoryChapter[] = [
         isBattle: true,
         opponentId: 105, // Chrono-Wing (Boss)
     },
+     // --- Wave 6: Advanced ---
     {
         character: "Mysterious Elder",
-        dialogue: "You have calmed the master of time... but a tear in reality remains. From it, a creature of pure nothingness emerges. The Void-Reaver consumes all.",
+        dialogue: "Time itself bends to your will. Now, venture into the ancient, petrified forest. A Granite Golem, far stronger than a simple Stoneling, has awoken.",
+        imageUrl: "https://i.imgur.com/pVmaLwK.png",
+        isBattle: false,
+    },
+    {
+        character: "Narrator",
+        dialogue: "The earth groans as a massive Granite Golem rises to block your path!",
+        isBattle: true,
+        opponentId: 34, // Granite Golem
+    },
+    {
+        character: "Mysterious Elder",
+        dialogue: "Next, you must seek out the Sunken City. It is protected by a Coral Sentinel, a living fortress whose defense is said to be unbreakable.",
+        imageUrl: "https://i.imgur.com/pVmaLwK.png",
+        isBattle: false,
+    },
+    {
+        character: "Narrator",
+        dialogue: "A towering Coral Sentinel emerges from the ruins, its eyes glowing with ancient power!",
+        isBattle: true,
+        opponentId: 35, // Coral Sentinel
+    },
+    {
+        character: "Mysterious Elder",
+        dialogue: "The last guardian before the great phoenix is the Storm Strider. It rides the thunderclouds and commands the lightning. Be swift.",
+        imageUrl: "https://i.imgur.com/pVmaLwK.png",
+        isBattle: false,
+    },
+    {
+        character: "Narrator",
+        dialogue: "A crackle of lightning announces the arrival of the Storm Strider!",
+        isBattle: true,
+        opponentId: 36, // Storm Strider
+    },
+    // --- Boss 5 ---
+    {
+        character: "Mysterious Elder",
+        dialogue: "You have tamed the storm. Now, face its master. High atop the solar peak, Solaris, the Sun-Phoenix, awaits. It is a being of pure, unending flame.",
+        imageUrl: "https://i.imgur.com/pVmaLwK.png",
+        isBattle: false,
+    },
+    {
+        character: "Narrator",
+        dialogue: "The air shimmers with intense heat as Solaris, the Sun-Phoenix, descends!",
+        isBattle: true,
+        opponentId: 108, // Solaris, the Sun-Phoenix (Boss)
+    },
+    // --- Wave 7: The Final Gauntlet ---
+    {
+        character: "Mysterious Elder",
+        dialogue: "The sun's fire is yours to command. Now, you must face a new challenge in the caldera of the great volcano. A vicious Cinderclaw has made its lair there.",
+        imageUrl: "https://i.imgur.com/pVmaLwK.png",
+        isBattle: false,
+    },
+    {
+        character: "Narrator",
+        dialogue: "With a roar of fire, a Cinderclaw leaps from the magma!",
+        isBattle: true,
+        opponentId: 37, // Cinderclaw
+    },
+    {
+        character: "Mysterious Elder",
+        dialogue: "Venture now to the Whispering Woods, where a mighty Rune-Bear slumbers. It is a creature of immense strength and ancient magic. Tread carefully.",
+        imageUrl: "https://i.imgur.com/pVmaLwK.png",
+        isBattle: false,
+    },
+    {
+        character: "Narrator",
+        dialogue: "A great Rune-Bear, its fur glowing with power, awakens from its slumber to challenge you!",
+        isBattle: true,
+        opponentId: 38, // Rune-Bear
+    },
+    {
+        character: "Mysterious Elder",
+        dialogue: "Your journey takes you to the Starfall Grotto, where moonlight gathers. It is guarded by a Dream-Weaver, a mystical moth whose powers defy reality.",
+        imageUrl: "https://i.imgur.com/pVmaLwK.png",
+        isBattle: false,
+    },
+    {
+        character: "Narrator",
+        dialogue: "A beautiful Dream-Weaver emerges, its wings scattering shimmering, hypnotic dust!",
+        isBattle: true,
+        opponentId: 39, // Dream-Weaver
+    },
+    // --- Boss 6 ---
+    {
+        character: "Mysterious Elder",
+        dialogue: "You have conquered dreams themselves. But now, you must face the nightmare. From the deepest abyss, Nocturne, the Shadow Titan, has been awakened by your power. It is a being of pure darkness.",
+        imageUrl: "https://i.imgur.com/pVmaLwK.png",
+        isBattle: false,
+    },
+    {
+        character: "Narrator",
+        dialogue: "A colossal shadow rises, blotting out all light. Nocturne, the Shadow Titan, has come!",
+        isBattle: true,
+        opponentId: 109, // Nocturne, the Shadow Titan (Boss)
+    },
+    // --- Wave 8: The Void's Edge ---
+    {
+        character: "Mysterious Elder",
+        dialogue: "The greatest darkness has been pushed back. Now, you must quell the remaining echoes. In the deep trenches, an Abyss-Watcher stirs, its shadowy tentacles corrupting the waters.",
+        imageUrl: "https://i.imgur.com/pVmaLwK.png",
+        isBattle: false,
+    },
+    {
+        character: "Narrator",
+        dialogue: "From the inky depths, an Abyss-Watcher fixes its countless eyes upon you!",
+        isBattle: true,
+        opponentId: 40, // Abyss-Watcher
+    },
+     {
+        character: "Mysterious Elder",
+        dialogue: "The final challenge before the ultimate guardian awaits in the Shifting Sands. A Mirage-Cat, a being of wind and illusion, stalks the dunes.",
+        imageUrl: "https://i.imgur.com/pVmaLwK.png",
+        isBattle: false,
+    },
+    {
+        character: "Narrator",
+        dialogue: "The sand itself seems to form into the shape of a cunning Mirage-Cat!",
+        isBattle: true,
+        opponentId: 41, // Mirage-Cat
+    },
+    {
+        character: "Mysterious Elder",
+        dialogue: "You have tamed the untamable. You have conquered light, darkness, and even time. But a tear in reality remains. From it, a creature of pure nothingness emerges. The Void-Reaver consumes all.",
         imageUrl: "https://i.imgur.com/pVmaLwK.png",
         isBattle: false,
     },
