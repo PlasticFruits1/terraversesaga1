@@ -42,6 +42,7 @@ interface BattleViewProps {
 }
 
 const MAX_SWITCHES = 3;
+const ENERGY_REGEN_PER_TURN = 10;
 
 type BattleStatus = 'awaiting' | 'in_progress' | 'finished';
 type FloatingText = { id: number; text: string; team: 'player' | 'opponent'; type: 'damage' | 'heal' | 'info' };
@@ -173,28 +174,17 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     switch (selectedAbility.type) {
         case 'attack':
             if (!defender) return;
-
-            let damage = Math.max(1, attacker.attack + (selectedAbility.power || 0));
-            addToLog(`${attacker.name}'s attack power is ${damage}.`);
-
             let updatedDefender = { ...defender };
             
-            const defenseDamage = Math.min(updatedDefender.defense, damage);
+            const baseDamage = attacker.attack + (selectedAbility.power || 0);
+            const damage = Math.max(1, baseDamage - updatedDefender.defense);
             
-            if (defenseDamage > 0) {
-              updatedDefender.defense -= defenseDamage;
-              addFloatingText(`-${defenseDamage} Def`, targetTeam, 'damage');
-              addToLog(`${updatedDefender.name}'s defense absorbed ${defenseDamage} damage! Remaining defense: ${updatedDefender.defense}`);
-            }
+            updatedDefender.hp = Math.max(0, updatedDefender.hp - damage);
 
-            const hpDamage = damage - defenseDamage;
-            if (hpDamage > 0) {
-              updatedDefender.hp = Math.max(0, updatedDefender.hp - hpDamage);
-              addFloatingText(`-${hpDamage}`, targetTeam, 'damage');
-              addToLog(`${updatedDefender.name} takes ${hpDamage} HP damage! Remaining HP: ${updatedDefender.hp}`);
-            }
+            addFloatingText(`-${damage}`, targetTeam, 'damage');
+            addToLog(`${updatedDefender.name} takes ${damage} damage! Remaining HP: ${updatedDefender.hp}`);
             
-            updateCreatureState(updatedDefender.id, { hp: updatedDefender.hp, defense: updatedDefender.defense }, targetTeam);
+            updateCreatureState(updatedDefender.id, { hp: updatedDefender.hp }, targetTeam);
             break;
         
         case 'defense':
@@ -284,21 +274,37 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
         }
     }
 
-    if (isPlayerTurn && activePlayerCreature?.isSleeping) {
-        addToLog(`${activePlayerCreature.name} woke up!`);
+    if (isPlayerTurn) {
+      if (activePlayerCreature?.isSleeping) {
+        addToLog(`${activePlayerCreature.name} is sleeping... It woke up!`);
         addFloatingText('Woke up!', 'player', 'info');
-        updateCreatureState(activePlayerCreature.id, { isSleeping: false }, 'player');
+        const restoredEnergy = Math.min(activePlayerCreature.maxEnergy, activePlayerCreature.energy + (ENERGY_REGEN_PER_TURN * 2));
+        updateCreatureState(activePlayerCreature.id, { isSleeping: false, energy: restoredEnergy }, 'player');
         setTimeout(() => setIsPlayerTurn(false), 1000);
         return;
+      }
+      if (activePlayerCreature) {
+        const regeneratedEnergy = Math.min(activePlayerCreature.maxEnergy, activePlayerCreature.energy + ENERGY_REGEN_PER_TURN);
+        if (regeneratedEnergy > activePlayerCreature.energy) {
+          updateCreatureState(activePlayerCreature.id, { energy: regeneratedEnergy }, 'player');
+        }
+      }
     }
 
     if (!isPlayerTurn && battleStatus === 'in_progress' && activeOpponentCreature) {
         if (activeOpponentCreature.isSleeping) {
-            addToLog(`${activeOpponentCreature.name} is asleep! It woke up!`);
+            addToLog(`${activeOpponentCreature.name} is asleep... It woke up!`);
             addFloatingText('Woke up!', 'opponent', 'info');
-            updateCreatureState(activeOpponentCreature.id, { isSleeping: false }, 'opponent');
+            const restoredEnergy = Math.min(activeOpponentCreature.maxEnergy, activeOpponentCreature.energy + (ENERGY_REGEN_PER_TURN * 2));
+            updateCreatureState(activeOpponentCreature.id, { isSleeping: false, energy: restoredEnergy }, 'opponent');
             setTimeout(() => setIsPlayerTurn(true), 1500);
             return;
+        }
+
+        // Opponent energy regen
+        const regeneratedEnergy = Math.min(activeOpponentCreature.maxEnergy, activeOpponentCreature.energy + ENERGY_REGEN_PER_TURN);
+        if (regeneratedEnergy > activeOpponentCreature.energy) {
+          updateCreatureState(activeOpponentCreature.id, { energy: regeneratedEnergy }, 'opponent');
         }
 
       if (activeOpponentCreature.hp > 0 && activePlayerCreature && activePlayerCreature.hp > 0) {
@@ -313,22 +319,13 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
               
                   switch (ability.type) {
                       case 'attack':
-                          let damage = Math.max(1, attacker.attack + (ability.power || 0));
-                          addToLog(`${attacker.name}'s attack power is ${damage}.`);
                           let updatedDefender = { ...defender };
-                          const defenseDamage = Math.min(updatedDefender.defense, damage);
-                          if (defenseDamage > 0) {
-                              updatedDefender.defense -= defenseDamage;
-                              addFloatingText(`-${defenseDamage} Def`, 'player', 'damage');
-                              addToLog(`Your ${updatedDefender.name}'s defense absorbed ${defenseDamage} damage!`);
-                          }
-                          const hpDamage = damage - defenseDamage;
-                          if (hpDamage > 0) {
-                              updatedDefender.hp = Math.max(0, updatedDefender.hp - hpDamage);
-                              addFloatingText(`-${hpDamage}`, 'player', 'damage');
-                              addToLog(`Your ${updatedDefender.name} takes ${hpDamage} HP damage!`);
-                          }
-                          updateCreatureState(updatedDefender.id, { hp: updatedDefender.hp, defense: updatedDefender.defense }, 'player');
+                          const baseDamage = attacker.attack + (ability.power || 0);
+                          const damage = Math.max(1, baseDamage - updatedDefender.defense);
+                          updatedDefender.hp = Math.max(0, updatedDefender.hp - damage);
+                          addFloatingText(`-${damage}`, 'player', 'damage');
+                          addToLog(`Your ${updatedDefender.name} takes ${damage} damage!`);
+                          updateCreatureState(updatedDefender.id, { hp: updatedDefender.hp }, 'player');
                           break;
                       case 'defense':
                           const defenseBoost = ability.defenseBoost || 0;
@@ -612,3 +609,5 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     </>
   );
 }
+
+    
