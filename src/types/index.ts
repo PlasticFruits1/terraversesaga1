@@ -29,9 +29,25 @@ export interface Creature {
   lore?: string;
 }
 
+export interface StoryChapter {
+    character: string;
+    dialogue: string;
+    imageUrl?: string;
+    isBattle: boolean;
+    opponentId?: number;
+}
+
+export interface StoryAct {
+    act: number;
+    title: string;
+    chapters: StoryChapter[];
+}
+
 export interface GameState {
   playerCreatures: Creature[];
   playerTeam: Creature[];
   opponentCreatures: Creature[];
-  storyProgress: number;
+  storyProgress?: number; // Kept for backward compatibility during migration
+  currentAct: number;
+  currentChapterIndex: number;
 }

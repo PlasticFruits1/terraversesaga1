@@ -35,7 +35,7 @@ interface BattleViewProps {
   playerCreatures: Creature[];
   allOpponentCreatures: Creature[];
   storyChapter?: StoryChapter;
-  setGameState: React.Dispatch<React.SetStateAction<GameState>>;
+  setGameState: React.Dispatch<React.SetStateAction<GameState | null>>;
   onBattleWin: (creatures: Creature[]) => void;
   onBattleEnd: () => void;
   onSwitchToRoster: () => void;

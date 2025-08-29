@@ -50,14 +50,16 @@ export default function Home() {
     );
   }
 
-  const currentChapter: StoryChapter | undefined = story[gameState.storyProgress];
+  const currentAct = story[gameState.currentAct];
+  const currentChapter: StoryChapter | undefined = currentAct?.chapters[gameState.currentChapterIndex];
+
   const showStoryDialog = currentChapter && !currentChapter.isBattle;
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground font-body">
       <GameHeader onSave={saveGame} onLoad={loadGame} onReset={resetGame} />
       
-      {showStoryDialog && (
+      {showStoryDialog && currentChapter && (
         <StoryDialog
           chapter={currentChapter}
           onNext={advanceStory}
