@@ -121,7 +121,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     setPlayerBattleTeam(livePlayerTeam);
     setActivePlayerCreature(livePlayerTeam[0]);
 
-    const liveOpponentTeam = [{...opponentCreature, hp: opponentCreature.maxHp, energy: opponentCreature.maxEnergy, defense: opponentCreature.defense, isSleeping: false}];
+    const liveOpponentTeam = [{...opponentCreature, hp: opponentCreature.maxHp, energy: opponentCreature.energy, defense: opponentCreature.defense, isSleeping: false}];
     setOpponentTeam(liveOpponentTeam);
     setActiveOpponentCreature(liveOpponentTeam[0]);
 
@@ -383,13 +383,16 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
 
   const handleSwitchCreature = (creature: Creature) => {
     if (creature.id !== activePlayerCreature?.id && creature.hp > 0 && battleStatus === 'in_progress') {
-        if (remainingSwitches <= 0) {
+        if (remainingSwitches <= 0 && activePlayerCreature && activePlayerCreature.hp > 0) {
             toast({ variant: "destructive", title: "No switches left!", description: "You cannot switch creatures anymore in this battle." });
             return;
         }
         
         const creatureToSwitch = playerBattleTeam.find(c => c.id === creature.id);
         if(!creatureToSwitch) return;
+
+        // A switch is only "free" if the current creature has fainted.
+        const isForcedSwitch = activePlayerCreature ? activePlayerCreature.hp <= 0 : false;
 
         const newActiveCreature = { ...creatureToSwitch, energy: creatureToSwitch.maxEnergy, isSleeping: false };
         
@@ -399,8 +402,11 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
 
         addToLog(`Go, ${creature.name}!`);
         setShowSwitchDialog(false);
-        setRemainingSwitches(prev => prev - 1);
-        setIsPlayerTurn(false); // Switching costs a turn
+        
+        if (!isForcedSwitch) {
+            setRemainingSwitches(prev => prev - 1);
+            setIsPlayerTurn(false); // Switching voluntarily costs a turn
+        }
     }
   }
   
@@ -542,7 +548,7 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
                    {battleOutcome === 'loss' && (
                       <div className="text-center p-4">
                           <p className="font-bold text-2xl mb-2 text-red-500">DEFEAT</p>
-                          <Button onClick={resetBattleState} className="mt-2">Try Again</Button>
+                          <Button onClick={handleEndBattleClick} className="mt-2">Try Again</Button>
                       </div>
                   )}
               </div>
@@ -620,5 +626,3 @@ export default function BattleView({ playerTeam: initialPlayerTeam, playerCreatu
     </>
   );
 }
-
-    
