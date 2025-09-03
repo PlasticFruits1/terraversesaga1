@@ -426,5 +426,118 @@ export const story: StoryAct[] = [
             isBattle: false,
         }
     ]
+  },
+  {
+    act: 8,
+    title: "Echoes of Creation",
+    chapters: [
+        {
+            character: "Mysterious Elder",
+            dialogue: "Though the Nexus is calm, new beasts, born from the echoes of your great battles, have appeared. In the crystal caves, a feisty Golemite has taken shape.",
+            imageUrl: "https://i.imgur.com/pVmaLwK.png",
+            isBattle: false,
+        },
+        {
+            character: "Narrator",
+            dialogue: "A Golemite, shimmering with crystalline energy, challenges you!",
+            isBattle: true,
+            opponentId: 42, // Golemite
+        },
+        {
+            character: "Mysterious Elder",
+            dialogue: "From the deep seas, an ancient Nautiloid has been awakened. Its psychic powers are a new kind of threat.",
+            imageUrl: "https://i.imgur.com/pVmaLwK.png",
+            isBattle: false,
+        },
+        {
+            character: "Narrator",
+            dialogue: "An ancient Nautiloid emerges, its shell glowing with psionic power!",
+            isBattle: true,
+            opponentId: 43, // Nautiloid
+        },
+        {
+            character: "Mysterious Elder",
+            dialogue: "The skies crackle with new energy. A tiny but ferocious Gale-Wren now commands the miniature storms of the highlands.",
+            imageUrl: "https://i.imgur.com/pVmaLwK.png",
+            isBattle: false,
+        },
+        {
+            character: "Narrator",
+            dialogue: "The tiny storm-bringer, Gale-Wren, dives at you with incredible speed!",
+            isBattle: true,
+            opponentId: 44, // Gale-Wren
+        },
+        {
+            character: "Mysterious Elder",
+            dialogue: "Your victories have awakened a creature of legend, the Hydra Prime. It guards the very source of the world's waters. Each of its heads is a foe unto itself.",
+            imageUrl: "https://i.imgur.com/pVmaLwK.png",
+            isBattle: false,
+        },
+        {
+            character: "Narrator",
+            dialogue: "The legendary Hydra Prime rises from the primordial sea, its three heads roaring in unison!",
+            isBattle: true,
+            opponentId: 110, // Hydra Prime (Boss)
+        },
+    ]
+  },
+  {
+    act: 9,
+    title: "Cosmic Ripples",
+    chapters: [
+        {
+            character: "Mysterious Elder",
+            dialogue: "The world continues to evolve. From the embers of your past fights, a mischievous Pyre-Imp has appeared, eager to test your skills with fiery tricks.",
+            imageUrl: "https://i.imgur.com/pVmaLwK.png",
+            isBattle: false,
+        },
+        {
+            character: "Narrator",
+            dialogue: "A cackling Pyre-Imp dances into view, its flames burning with playful malice!",
+            isBattle: true,
+            opponentId: 45, // Pyre-Imp
+        },
+        {
+            character: "Mysterious Elder",
+            dialogue: "Benevolent spirits of light, the Lux-Mites, have gathered in the sunniest meadows. They are peaceful, but their collective light can be overwhelming.",
+            imageUrl: "https://i.imgur.com/pVmaLwK.png",
+            isBattle: false,
+        },
+        {
+            character: "Narrator",
+            dialogue: "A swarm of gentle Lux-Mites gather, their combined light as bright as the sun!",
+            isBattle: true,
+            opponentId: 46, // Lux-Mite
+        },
+        {
+            character: "Mysterious Elder",
+            dialogue: "In the darkest corners, sorrowful Gloom-Wisps have coalesced. Their melancholic energy can sap the will of any creature.",
+            imageUrl: "https://i.imgur.com/pVmaLwK.png",
+            isBattle: false,
+        },
+        {
+            character: "Narrator",
+            dialogue: "A sorrowful Gloom-Wisp floats towards you, an aura of sadness chilling the air!",
+            isBattle: true,
+            opponentId: 47, // Gloom-Wisp
+        },
+        {
+            character: "Mysterious Elder",
+            dialogue: "Your journey has been noticed by forces beyond this world. The Aether-Wyrm, a dragon of cosmic energy, has descended to test the true master of Terraverse.",
+            imageUrl: "https://i.imgur.com/pVmaLwK.png",
+            isBattle: false,
+        },
+        {
+            character: "Narrator",
+            dialogue: "The very fabric of reality tears as the cosmic Aether-Wyrm emerges!",
+            isBattle: true,
+            opponentId: 111, // Aether-Wyrm (Final Boss)
+        },
+        {
+            character: "Narrator",
+            dialogue: "Congratulations, Tamer. You have conquered every challenge Terraverse has to offer. The world is truly at peace, thanks to you.",
+            isBattle: false,
+        }
+    ]
   }
 ];
