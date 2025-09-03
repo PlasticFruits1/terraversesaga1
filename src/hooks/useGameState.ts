@@ -68,8 +68,8 @@ const getInitialState = (): GameState => {
         playerCreatures,
         playerTeam: playerCreatures.slice(0, 3), // Start with the first 3
         opponentCreatures: initializeCreatures(opponentCreatures),
-        currentAct: 7,
-        currentChapterIndex: 1,
+        currentAct: 0,
+        currentChapterIndex: 0,
     };
 };
 
