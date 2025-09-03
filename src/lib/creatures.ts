@@ -471,7 +471,7 @@ const regularOpponents: Creature[] = [
     defense: 45,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://picsum.photos/600/400",
+    imageUrl: "https://i.imgur.com/14y5Jpz.jpg",
     aiHint: "small crystal golem",
     lore: "These smaller, more agile relatives of the Granite Golem are born from geode caves. Their bodies are made of sharp, pulsating crystals, making them dangerous to touch. They move in short, quick bursts, often catching opponents off guard with their surprising speed.",
     abilities: [
@@ -490,7 +490,7 @@ const regularOpponents: Creature[] = [
     defense: 50,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://picsum.photos/600/400",
+    imageUrl: "https://i.imgur.com/SmYiiF9.jpg",
     aiHint: "ancient nautilus monster",
     lore: "An ancient creature from the darkest depths of the ocean, the Nautiloid possesses a hardened shell and mysterious psychic abilities. It communicates through pulses of colored light that ripple across its shell. Legends say they are the keepers of forgotten oceanic histories.",
     abilities: [
@@ -509,7 +509,7 @@ const regularOpponents: Creature[] = [
     defense: 30,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://picsum.photos/600/400",
+    imageUrl: "https://i.imgur.com/tdGRmDI.jpg",
     aiHint: "tiny storm bird",
     lore: "This tiny bird's heart beats at an impossible rate, generating a miniature storm system that perpetually surrounds it. It is incredibly fast and erratic, making it a difficult target. Despite its size, its territorial screeches can sound like a roaring tornado.",
     abilities: [
@@ -528,7 +528,7 @@ const regularOpponents: Creature[] = [
     defense: 32,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://picsum.photos/600/400",
+    imageUrl: "https://i.imgur.com/cyHlrb6.jpg",
     aiHint: "mischievous fire imp",
     lore: "Born from mischievous sparks in a great bonfire, Pyre-Imps are agents of joyful chaos. They delight in playing pranks, leaving small, harmless scorch marks in their wake. Their laughter sounds like crackling embers, and they dance with wild abandon.",
     abilities: [
@@ -547,7 +547,7 @@ const regularOpponents: Creature[] = [
     defense: 40,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://picsum.photos/600/400",
+    imageUrl: "https://i.imgur.com/heiBF8C.jpg",
     aiHint: "glowing dust bunny",
     lore: "These creatures are concentrations of pure, benevolent light that often disguise themselves as dust bunnies. They feed on positivity and happiness, and their presence has a calming effect. When they gather in numbers, their collective glow can be as bright as the midday sun.",
     abilities: [
@@ -566,7 +566,7 @@ const regularOpponents: Creature[] = [
     defense: 38,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://picsum.photos/600/400",
+    imageUrl: "https://i.imgur.com/fAG8G8D.jpg",
     aiHint: "small shadow spirit",
     lore: "These sorrowful spirits are born from shadows cast in lonely places. They are not malicious, but their presence can drain the warmth and happiness from their surroundings. They are drawn to quiet, somber areas and communicate through melancholic, sighing sounds.",
     abilities: [
@@ -585,7 +585,7 @@ const regularOpponents: Creature[] = [
     defense: 65,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://picsum.photos/600/400",
+    imageUrl: "https://i.imgur.com/k18W2OW.jpg",
     aiHint: "ancient ironwood treant",
     lore: "An ancient guardian of the forest whose bark is as hard as iron. These Treants are slow to anger, but once roused, their strength is legendary. Moss and smaller plants often grow on their bodies, creating a miniature ecosystem that moves with the Treant.",
     abilities: [
@@ -604,7 +604,7 @@ const regularOpponents: Creature[] = [
     defense: 50,
     energy: 100,
     maxEnergy: 100,
-    imageUrl: "https://picsum.photos/600/400",
+    imageUrl: "https://i.imgur.com/koUPivp.jpg",
     aiHint: "small desert drake",
     lore: "These smaller relatives of great dragons have adapted to desert life, with scales the color of sand and the ability to 'swim' through dunes. They are patient hunters, lying in wait beneath the sand for days. Their breath is not fire, but a superheated blast of sand and air.",
     abilities: [
@@ -797,7 +797,7 @@ const bossCreatures: Creature[] = [
     defense: 70,
     energy: 180,
     maxEnergy: 180,
-    imageUrl: "https://picsum.photos/600/400",
+    imageUrl: "https://i.imgur.com/v3jqXEf.jpg",
     aiHint: "three-headed elemental hydra",
     lore: "A legendary beast from the world's first oceans, the Hydra Prime has three heads, each commanding a different aspect of water: crushing pressure, freezing ice, and healing mist. It is a guardian of the sources of all water in the world, and its rage can cause global floods or instant ice ages.",
     abilities: [
@@ -816,7 +816,7 @@ const bossCreatures: Creature[] = [
     defense: 80,
     energy: 220,
     maxEnergy: 220,
-    imageUrl: "https://picsum.photos/600/400",
+    imageUrl: "https://i.imgur.com/UdhPD19.jpg",
     aiHint: "cosmic energy dragon",
     lore: "A dragon not of the elements, but of the space between them. The Aether-Wyrm swims through the cosmic energy that binds the universe, its scales shimmering with the light of a billion stars. It is neither good nor evil, but a force of pure creation and destruction, a true god of the Terraverse.",
     abilities: [
