@@ -20,18 +20,11 @@ const initializeCreatures = (creatures: Creature[]): Creature[] => {
     }));
 };
 
-const getInitialState = (): GameState => {
-    const playerCreatures = initializeCreatures(initialCreatures);
-    return {
-        playerCreatures,
-        playerTeam: playerCreatures.slice(0, 3), // Start with the first 3
-        opponentCreatures: initializeCreatures(opponentCreatures),
-        currentAct: 0,
-        currentChapterIndex: 0,
-    };
-};
-
 const migrateSaveData = (loadedState: any): GameState => {
+    // If story is not loaded yet, we can't migrate. Defer.
+    if (!story || story.length === 0) {
+      return loadedState;
+    }
     // If the save is already in the new format, no migration needed
     if (loadedState.currentAct !== undefined && loadedState.currentChapterIndex !== undefined) {
       // Still, always load canonical opponents
@@ -69,6 +62,17 @@ const migrateSaveData = (loadedState: any): GameState => {
     };
 }
 
+const getInitialState = (): GameState => {
+    const playerCreatures = initializeCreatures(initialCreatures);
+    return {
+        playerCreatures,
+        playerTeam: playerCreatures.slice(0, 3), // Start with the first 3
+        opponentCreatures: initializeCreatures(opponentCreatures),
+        currentAct: 0,
+        currentChapterIndex: 0,
+    };
+};
+
 
 export function useGameState() {
   const [gameState, setGameState] = useState<GameState | null>(null);
@@ -76,30 +80,31 @@ export function useGameState() {
   const previousCreatureCount = useRef(0);
 
   useEffect(() => {
+    // This effect ensures that state is loaded only on the client
+    // and that migration logic has access to the imported `story` data.
     try {
       const savedGame = localStorage.getItem(GAME_SAVE_KEY);
+      let loadedState;
+
       if (savedGame) {
-        let loadedState = JSON.parse(savedGame);
-        
-        // Migrate old save data if necessary
-        loadedState = migrateSaveData(loadedState);
-
-        // Ensure creatures have their runtime stats initialized
-        loadedState.playerCreatures = initializeCreatures(loadedState.playerCreatures);
-
-        if (!loadedState.playerTeam || loadedState.playerTeam.length === 0) {
-            loadedState.playerTeam = loadedState.playerCreatures.slice(0, 3);
-        } else {
-            loadedState.playerTeam = initializeCreatures(loadedState.playerTeam);
-        }
-
-        previousCreatureCount.current = loadedState.playerCreatures.length;
-        setGameState(loadedState);
+        let parsedState = JSON.parse(savedGame);
+        loadedState = migrateSaveData(parsedState); // Migrate old save data if necessary
       } else {
-        const initialState = getInitialState();
-        previousCreatureCount.current = initialState.playerCreatures.length;
-        setGameState(initialState);
+        loadedState = getInitialState();
       }
+
+      // Ensure creatures have their runtime stats initialized
+      loadedState.playerCreatures = initializeCreatures(loadedState.playerCreatures);
+
+      if (!loadedState.playerTeam || loadedState.playerTeam.length === 0) {
+          loadedState.playerTeam = loadedState.playerCreatures.slice(0, 3);
+      } else {
+          loadedState.playerTeam = initializeCreatures(loadedState.playerTeam);
+      }
+
+      previousCreatureCount.current = loadedState.playerCreatures.length;
+      setGameState(loadedState);
+
     } catch (error) {
       console.error("Failed to load game state from localStorage", error);
       setGameState(getInitialState());
@@ -119,7 +124,7 @@ export function useGameState() {
     if (gameState) {
       previousCreatureCount.current = gameState.playerCreatures.length;
     }
-  }, [gameState?.playerCreatures, toast]);
+  }, [gameState?.playerCreatures.length, toast]);
 
 
   const saveGame = useCallback(() => {
